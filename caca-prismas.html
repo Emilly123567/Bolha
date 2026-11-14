@@ -405,10 +405,32 @@ body.toque:not(.controle) #habHud { display: none; }
 .outro .nm { font: 800 11px var(--f-texto); text-shadow: 0 1px 2px #000; margin-bottom: 2px; } .outro .nm b { color: #bfe8ff; margin-left: 4px; }
 .outro .hp { position: relative; width: 84px; height: 7px; margin: 0 auto; border-radius: 4px; background: rgba(8, 10, 20, 0.75); overflow: hidden; box-shadow: 0 0 0 1px rgba(90, 200, 255, 0.5); }
 .outro .hp i { position: absolute; left: 0; top: 0; bottom: 0; } .outro .hp i.alta { background: #5effa0; } .outro .hp i.media { background: #ffd84a; } .outro .hp i.baixa { background: #ff3a5a; }
-#chat { left: calc(12px + env(safe-area-inset-left, 0px)); bottom: calc(var(--slot) + 92px + env(safe-area-inset-bottom, 0px)); width: min(380px, 70vw); display: flex; flex-direction: column; gap: 3px; pointer-events: none; }
-#chat .cl { font: 700 12px var(--f-texto); padding: 3px 8px; border-radius: 8px; background: rgba(8, 10, 20, 0.62); text-shadow: 0 1px 2px #000; transition: opacity 1s; overflow-wrap: anywhere; }
+#chat { left: calc(12px + env(safe-area-inset-left, 0px)); bottom: calc(var(--slot) + 96px + env(safe-area-inset-bottom, 0px)); width: min(300px, 60vw); display: flex; flex-direction: column; gap: 2px; pointer-events: none; }
+#chat .cl { font: 700 11px/1.35 var(--f-texto); padding: 2px 7px; border-radius: 6px; background: rgba(8, 10, 20, 0.5); text-shadow: 0 1px 2px #000; transition: opacity 1s; overflow-wrap: anywhere; animation: colEntra 0.25s ease-out; }
 #chat .cl b { color: #5ac8ff; } #chat .cl.meu b { color: #ffd84a; } #chat .cl.sai { opacity: 0; }
-#chatIn { position: fixed; z-index: 22; left: calc(12px + env(safe-area-inset-left, 0px)); bottom: calc(var(--slot) + 56px + env(safe-area-inset-bottom, 0px)); width: min(380px, 80vw); padding: 9px 12px; border-radius: 10px; border: 1px solid rgba(90, 200, 255, 0.6); background: rgba(8, 10, 20, 0.92); color: #fff; font: 700 13px var(--f-texto); }
+#bChat { position: relative; } #bChat .n:not(:empty) { position: absolute; top: -5px; right: -5px; min-width: 17px; height: 17px; padding: 0 4px; border-radius: 9px; background: #ff3a5a; color: #fff; font: 800 10px/17px var(--f-texto); text-align: center; }
+#bChat.novo { border-color: rgba(90, 200, 255, 0.7); }
+#chatJan { position: fixed; z-index: 21; left: calc(12px + env(safe-area-inset-left, 0px)); bottom: calc(var(--slot) + 40px + env(safe-area-inset-bottom, 0px)); width: min(340px, calc(100vw - 24px)); display: flex; flex-direction: column; border-radius: 14px; background: rgba(8, 10, 22, 0.88); border: 1px solid rgba(90, 200, 255, 0.4); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); backdrop-filter: blur(6px); overflow: hidden; }
+#chatJan[hidden] { display: none !important; }
+.cj-cab { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); font-size: 12px; }
+.cj-cab b { font: 400 13px var(--f-titulo); } .cj-cab span { flex: 1; color: var(--tinta-2); font-size: 11px; }
+.cj-cab button { width: 26px; height: 26px; border-radius: 8px; border: 1px solid var(--borda); background: rgba(255, 255, 255, 0.06); padding: 0; }
+#cjLog { height: 180px; overflow-y: auto; padding: 6px 10px; font-size: 12px; }
+#cjLog p { margin: 3px 0; overflow-wrap: anywhere; line-height: 1.35; } #cjLog b { color: #5ac8ff; } #cjLog p.meu b { color: #ffd84a; } #cjLog .vazio { color: var(--tinta-2); }
+.cj-in { display: flex; gap: 6px; padding: 8px; border-top: 1px solid rgba(255, 255, 255, 0.08); }
+#chatIn { flex: 1; min-width: 0; padding: 8px 10px; border-radius: 9px; border: 1px solid rgba(90, 200, 255, 0.5); background: rgba(0, 0, 0, 0.35); color: #fff; font: 700 13px var(--f-texto); }
+#chatIn:disabled { opacity: 0.6; }
+.cj-in button { padding: 0 12px; border-radius: 9px; }
+.on-estado { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 12px; background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.1); margin: 10px 0; }
+.on-estado > div { flex: 1; min-width: 0; } .on-estado b { display: block; } .on-estado small { display: block; color: var(--tinta-2); }
+.on-estado .pt { width: 10px; height: 10px; border-radius: 50%; background: #6a7088; flex: none; }
+.on-estado.on .pt { background: #5effa0; box-shadow: 0 0 8px #5effa0; } .on-estado.conectando .pt { background: #ffd84a; animation: pulsaHp 0.8s infinite; }
+.on-estado .cod { margin-top: 4px; font-size: 13px; } .on-estado .cod strong { font: 400 20px var(--f-titulo); letter-spacing: 0.12em; color: #5ac8ff; }
+.on-opcoes { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 8px; margin-bottom: 8px; }
+.op-on { text-align: left; padding: 10px 12px; border-radius: 12px; border: 1px solid rgba(90, 200, 255, 0.3); background: rgba(90, 200, 255, 0.06); }
+.op-on.on { border-color: #5effa0; } .op-on b { display: block; } .op-on small { display: block; color: var(--tinta-2); font-size: 11px; margin-bottom: 4px; }
+.bt-link { display: inline-flex; align-items: center; padding: 8px 14px; border-radius: 10px; background: linear-gradient(180deg, #ffe680, #ffc93a); color: #2a1c00; font-weight: 800; text-decoration: none; }
+@media (max-width: 640px) { #chat { bottom: auto; top: calc(150px + env(safe-area-inset-top, 0px)); width: 52vw; } #chat .cl { font-size: 10px; } #chatJan { bottom: auto; top: calc(130px + env(safe-area-inset-top, 0px)); } #cjLog { height: 130px; } #bChat .txt { display: none; } }
 .on-form label { display: block; } .on-form .campo { margin-top: 4px; }
 .on-lista { display: grid; gap: 6px; }
 .on-j { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: auto auto auto; column-gap: 10px; padding: 8px 10px; border-radius: 10px; background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(90, 200, 255, 0.25); }
@@ -440,6 +462,7 @@ body.toque:not(.controle) #habHud { display: none; }
 <div id="topo" class="ui">
   <button class="bt" id="bInv" title="Inventário (I)"><span aria-hidden="true">▣</span> <span class="txt">Inventário</span><span class="badge" id="badgeInv" hidden></span></button>
   <button class="bt" id="bAttr" title="Atributos (P)"><span aria-hidden="true">▲</span> <span class="txt">Atributos</span><span class="badge" id="badge" hidden>!</span></button>
+  <button class="bt" id="bChat" title="Chat (Enter)"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M4 4h16v11H9l-5 4z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/></svg> <span class="txt">Chat</span><span class="n"></span></button>
   <button class="bt" id="bOnline" title="Multiplayer (Enter abre o chat)"><span class="pt" aria-hidden="true"></span> <span class="txt">Online</span> <span class="n"></span></button>
   <button class="bt" id="bStatus" title="Status e build (K)"><span aria-hidden="true">◆</span> <span class="txt">Status</span></button>
   <button class="bt" id="bCfg" title="Ajustes">⚙</button>
@@ -2794,22 +2817,36 @@ const naPaginaDoClaude = () => /claude\.ai|claudeusercontent|anthropic/.test(loc
 const enderecoServidor = () => (window.CP_SERVIDOR || S.cfg.servidor || '').trim().replace(/\/+$/, '');
 function perfilOnline() { const h = segurado(); return { nome: S.look.nome || 'Caçador', look: S.look, ti: nivelTitulo(), au: S.cfg.aura ?? 1, it: h ? { tipo: h.tipo, rar: h.rar, hab: h.hab, tags: h.tags || [] } : null, mo: S.mundial ?? null }; }
 function enviar(obj) { if (ONLINE.ws && ONLINE.ws.readyState === 1) ONLINE.ws.send(JSON.stringify(obj)); }
+// o que o jogador pediu: 'mundo', 'criar' ou 'codigo' (para a mensagem certa enquanto conecta)
+let bloqueadoCSP = false, tConexao = 0;
+document.addEventListener('securitypolicyviolation', (e) => { if (/^wss?:/i.test(e.blockedURI || '') || /connect-src/.test(e.violatedDirective || '')) { bloqueadoCSP = true; if (ONLINE.estado !== 'off') { ONLINE.querer = false; ONLINE.estado = 'off'; ONLINE.msg = ''; marcarBotaoOnline(); atualizarPainelOnline(); } } });
 function conectar(sala) {
-  const base = enderecoServidor(); if (!base) { ONLINE.msg = 'Digite o endereço do servidor.'; atualizarPainelOnline(); return; }
-  desconectar(true); ONLINE.querer = true; ONLINE.salaPedida = (sala || 'MUNDO').toUpperCase(); ONLINE.estado = 'conectando'; ONLINE.msg = 'Conectando…'; atualizarPainelOnline(); marcarBotaoOnline();
-  let ws; try { ws = new WebSocket(base.replace(/^http/i, 'ws') + '/ws'); } catch (e) { ONLINE.estado = 'off'; ONLINE.msg = 'Endereço inválido.'; atualizarPainelOnline(); return; }
+  const base = enderecoServidor(); if (!base) { ONLINE.msg = 'Digite o endereço do servidor (o link do Render).'; atualizarPainelOnline(); return; }
+  if (naPaginaDoClaude() && !window.CP_SERVIDOR) { bloqueadoCSP = true; ONLINE.estado = 'off'; atualizarPainelOnline(); return; }
+  desconectar(true); ONLINE.querer = true; ONLINE.salaPedida = (sala || 'MUNDO').toUpperCase(); ONLINE.estado = 'conectando'; tConexao = performance.now();
+  ONLINE.msg = ONLINE.salaPedida === 'NOVA' ? 'Criando a sua sala…' : ONLINE.salaPedida === 'MUNDO' ? 'Entrando no mundo aberto…' : 'Procurando a sala ' + ONLINE.salaPedida + '…';
+  atualizarPainelOnline(); marcarBotaoOnline();
+  let ws; try { ws = new WebSocket(base.replace(/^http/i, 'ws') + '/ws'); } catch (e) { ONLINE.estado = 'off'; ONLINE.querer = false; ONLINE.msg = 'Não deu para usar esse endereço: ' + (e.message || e); atualizarPainelOnline(); marcarBotaoOnline(); return; }
   ONLINE.ws = ws;
   ws.onopen = () => { ONLINE.tentativas = 0; enviar(Object.assign({ t: 'entrar', sala: ONLINE.salaPedida }, perfilOnline())); };
   ws.onmessage = (ev) => { let m; try { m = JSON.parse(ev.data); } catch (e) { return; } tratarOnline(m); };
-  ws.onerror = () => { ONLINE.msg = naPaginaDoClaude() ? 'Dentro do Claude o navegador bloqueia o servidor. Abra o jogo pelo endereço do Render.' : 'Não deu para falar com o servidor (no plano grátis do Render ele pode levar ~1 min para acordar).'; };
-  ws.onclose = () => { if (ONLINE.ws !== ws) return; limparOutros(); ONLINE.ws = null; ONLINE.id = null; marcarBotaoOnline();
-    if (ONLINE.querer && ONLINE.tentativas < 8) { ONLINE.estado = 'conectando'; const t = Math.min(15, 1.5 * 2 ** ONLINE.tentativas++); ONLINE.msg = (ONLINE.msg && ONLINE.estado !== 'on' ? ONLINE.msg + ' ' : '') + 'Tentando de novo em ' + Math.round(t) + ' s…'; setTimeout(() => { if (ONLINE.querer && !ONLINE.ws) conectar(ONLINE.salaPedida); }, t * 1000); }
-    else { ONLINE.estado = 'off'; ONLINE.querer = false; } atualizarPainelOnline(); };
+  ws.onclose = () => {
+    if (ONLINE.ws !== ws) return; const estava = ONLINE.estado === 'on'; limparOutros(); ONLINE.ws = null; ONLINE.id = null;
+    if (bloqueadoCSP) { ONLINE.estado = 'off'; ONLINE.querer = false; }
+    else if (ONLINE.querer && ONLINE.tentativas < 10) {
+      // o Render grátis dorme: a primeira conexão pode levar até ~1 min enquanto ele acorda
+      ONLINE.estado = 'conectando'; const t = Math.min(10, 2 + ONLINE.tentativas * 2); ONLINE.tentativas++;
+      ONLINE.msg = (estava ? 'A conexão caiu. ' : 'O servidor ainda não respondeu (no plano grátis ele leva até 1 min para acordar). ') + 'Tentando de novo em ' + t + ' s… (tentativa ' + ONLINE.tentativas + ' de 10)';
+      if (estava && ONLINE.sala && ONLINE.sala !== 'MUNDO') ONLINE.salaPedida = ONLINE.sala; // volta para a mesma sala, não cria outra
+      setTimeout(() => { if (ONLINE.querer && !ONLINE.ws) conectar(ONLINE.salaPedida); }, t * 1000);
+    } else { ONLINE.estado = 'off'; ONLINE.querer = false; ONLINE.msg = 'O servidor não respondeu. Confira o endereço e se o serviço está "Live" no Render.'; }
+    marcarBotaoOnline(); atualizarPainelOnline();
+  };
 }
 function desconectar(trocando) { ONLINE.querer = false; const ws = ONLINE.ws; ONLINE.ws = null; if (ws) try { ws.close(); } catch (e) { /* ok */ } limparOutros(); ONLINE.id = null; ONLINE.sala = null; if (!trocando) { ONLINE.estado = 'off'; ONLINE.msg = ''; marcarBotaoOnline(); atualizarPainelOnline(); } }
 function tratarOnline(m) {
   switch (m.t) {
-    case 'sala': ONLINE.id = m.id; ONLINE.sala = m.sala; ONLINE.estado = 'on'; ONLINE.msg = ''; for (const j of m.jogadores || []) novoOutro(j); toast('Online: sala ' + (m.sala === 'MUNDO' ? 'Mundo aberto' : m.sala) + ' · ' + (m.jogadores || []).length + ' jogador(es)', '#5ac8ff'); marcarBotaoOnline(); atualizarPainelOnline(); break;
+    case 'sala': ONLINE.id = m.id; ONLINE.sala = m.sala; ONLINE.estado = 'on'; ONLINE.msg = ''; for (const j of m.jogadores || []) novoOutro(j); toast(m.sala === 'MUNDO' ? 'Você entrou no mundo aberto' : ONLINE.salaPedida === 'NOVA' ? 'Sala criada! Código: ' + m.sala + ' (passe para os amigos)' : 'Você entrou na sala ' + m.sala, '#5ac8ff'); ONLINE.salaPedida = m.sala; marcarBotaoOnline(); atualizarPainelOnline(); break;
     case 'entrou': novoOutro(m); toast((m.nome || 'Alguém') + ' entrou no mundo', '#5ac8ff'); marcarBotaoOnline(); atualizarPainelOnline(); break;
     case 'perfil': { const o = ONLINE.jog.get(m.i); if (o) { Object.assign(o.perfil, m); montarOutro(o); } break; }
     case 'p': { const o = ONLINE.jog.get(m.i); if (o) { o.buf.push({ t: performance.now(), x: m.x, y: m.y, z: m.z, r: m.r, a: m.a | 0 }); if (o.buf.length > 12) o.buf.shift(); o.hp = m.hp; o.bi = m.bi; o.vivo = m.v !== 0; } break; }
@@ -2818,7 +2855,7 @@ function tratarOnline(m) {
     case 'chat': mostrarChat(m.nome, m.txt, m.i === ONLINE.id); break;
     case 'tchau': { const o = ONLINE.jog.get(m.i); if (o) { toast(o.perfil.nome + ' saiu', '#8a9ab0'); removerOutro(o); marcarBotaoOnline(); atualizarPainelOnline(); } break; }
     case 'pong': ONLINE.ping = Math.round(performance.now() - m.c); break;
-    case 'erro': ONLINE.msg = m.msg; ONLINE.querer = false; atualizarPainelOnline(); break;
+    case 'erro': ONLINE.msg = m.msg; ONLINE.querer = false; ONLINE.estado = 'off'; try { ONLINE.ws && ONLINE.ws.close(); } catch (e) { /* ok */ } ONLINE.ws = null; marcarBotaoOnline(); atualizarPainelOnline(); break;
   }
 }
 // ---------------- outros jogadores ----------------
@@ -2873,43 +2910,82 @@ function tickOnline(dt) {
   if (ONLINE.tEnvio <= 0) { ONLINE.tEnvio = 0.1; enviar({ t: 'p', x: +J.x.toFixed(2), y: +J.y.toFixed(2), z: +J.z.toFixed(2), r: +J.rot.toFixed(3), a: (Math.hypot(J.x - (ONLINE.ux ?? J.x), J.z - (ONLINE.uz ?? J.z)) > 0.02 ? 1 : 0) | (J.chao ? 2 : 0) | (J.golpe > 0 ? 4 : 0), hp: +clamp(D.razao(J.hp, E.vidaMax), 0, 1).toFixed(3), bi: J.bioma, v: J.vivo ? 1 : 0 }); ONLINE.ux = J.x; ONLINE.uz = J.z; }
   if (ONLINE.tPerfil <= 0) { ONLINE.tPerfil = 1; const p = perfilOnline(), ass = JSON.stringify(p); if (ass !== ONLINE.perfilAss) { ONLINE.perfilAss = ass; enviar(Object.assign({ t: 'perfil' }, p)); } if (Math.random() < 0.2) enviar({ t: 'ping', c: performance.now() }); }
 }
-// ---------------- chat ----------------
-const chatEl = document.createElement('div'); chatEl.id = 'chat'; chatEl.className = 'ui'; document.body.appendChild(chatEl);
-const chatIn = document.createElement('input'); chatIn.id = 'chatIn'; chatIn.maxLength = 160; chatIn.placeholder = 'Mensagem (Enter envia, Esc fecha)'; chatIn.hidden = true; chatIn.setAttribute('aria-label', 'Mensagem do chat'); document.body.appendChild(chatIn);
+// ---------------- chat (separado do painel de salas) ----------------
+// fechado: as mensagens novas aparecem pequenas no canto esquerdo e somem sozinhas
+// aberto: janelinha com o histórico e o campo de texto; o jogo continua rodando
+const chatEl = document.createElement('div'); chatEl.id = 'chat'; chatEl.className = 'ui'; chatEl.setAttribute('aria-live', 'polite'); document.body.appendChild(chatEl);
+const chatJan = document.createElement('div'); chatJan.id = 'chatJan'; chatJan.hidden = true;
+chatJan.innerHTML = '<div class="cj-cab"><b>Chat</b><span id="cjSala"></span><button id="cjX" aria-label="Fechar chat">×</button></div><div id="cjLog"></div><div class="cj-in"><input id="chatIn" maxlength="160" placeholder="Mensagem (Enter envia, Esc fecha)" aria-label="Mensagem do chat"><button id="cjEnv">Enviar</button></div>';
+document.body.appendChild(chatJan);
+const chatIn = chatJan.querySelector('#chatIn'); let chatNaoLidas = 0;
 function mostrarChat(nome, txt, meu) {
+  ONLINE.chat.push({ nome, txt, meu }); if (ONLINE.chat.length > 60) ONLINE.chat.shift();
+  if (!chatJan.hidden) { desenharChatLog(); return; }
   const l = document.createElement('div'); l.className = 'cl' + (meu ? ' meu' : ''); const b = document.createElement('b'); b.textContent = nome + ': '; l.appendChild(b); l.appendChild(document.createTextNode(txt)); chatEl.appendChild(l);
-  while (chatEl.children.length > 7) chatEl.firstChild.remove(); setTimeout(() => l.classList.add('sai'), 12000); setTimeout(() => l.remove(), 13000);
-  ONLINE.chat.push({ nome, txt }); if (ONLINE.chat.length > 40) ONLINE.chat.shift(); if (painelAberto === 'online') atualizarPainelOnline();
+  while (chatEl.children.length > 5) chatEl.firstChild.remove(); setTimeout(() => l.classList.add('sai'), 8000); setTimeout(() => l.remove(), 9000);
+  if (!meu) { chatNaoLidas++; marcarBotaoChat(); }
+}
+function desenharChatLog() {
+  const log = $('#cjLog'); log.innerHTML = ONLINE.chat.length ? ONLINE.chat.map((c) => `<p class="${c.meu ? 'meu' : ''}"><b>${escH(c.nome)}:</b> ${escH(c.txt)}</p>`).join('') : `<p class="vazio">${ONLINE.estado === 'on' ? 'Sem mensagens ainda. Diga oi!' : 'Você não está no multiplayer.'}</p>`; log.scrollTop = log.scrollHeight;
+  $('#cjSala').textContent = ONLINE.estado === 'on' ? (ONLINE.sala === 'MUNDO' ? 'Mundo aberto' : 'Sala ' + ONLINE.sala) + ' · ' + (ONLINE.jog.size + 1) + ' online' : 'Desconectado';
+  chatIn.disabled = ONLINE.estado !== 'on'; $('#cjEnv').disabled = ONLINE.estado !== 'on'; chatIn.placeholder = ONLINE.estado === 'on' ? 'Mensagem (Enter envia, Esc fecha)' : 'Entre no multiplayer (botão Online) para conversar';
 }
 function enviarChat(txt) { txt = String(txt || '').trim().slice(0, 160); if (!txt || ONLINE.estado !== 'on') return; enviar({ t: 'chat', txt }); mostrarChat(S.look.nome || 'Você', txt, true); }
-function abrirChat() { if (ONLINE.estado !== 'on') { abrirOnline(); return; } chatIn.hidden = false; chatIn.value = ''; chatIn.focus(); }
-chatIn.addEventListener('keydown', (e) => { e.stopPropagation(); if (e.key === 'Enter') { enviarChat(chatIn.value); chatIn.value = ''; chatIn.hidden = true; chatIn.blur(); } if (e.key === 'Escape') { chatIn.hidden = true; chatIn.blur(); } });
+function abrirChat() { chatJan.hidden = false; chatEl.innerHTML = ''; chatNaoLidas = 0; marcarBotaoChat(); desenharChatLog(); if (ONLINE.estado === 'on') chatIn.focus(); }
+function fecharChat() { chatJan.hidden = true; chatIn.blur(); }
+const chatAberto = () => !chatJan.hidden;
+function marcarBotaoChat() { const b = $('#bChat'); if (!b) return; const n = b.querySelector('.n'); n.textContent = chatNaoLidas ? String(Math.min(99, chatNaoLidas)) : ''; b.classList.toggle('novo', chatNaoLidas > 0); }
+chatIn.addEventListener('keydown', (e) => { e.stopPropagation(); if (e.key === 'Enter') { enviarChat(chatIn.value); chatIn.value = ''; if (!e.shiftKey && window.innerWidth > 900) { fecharChat(); } } if (e.key === 'Escape') fecharChat(); });
+chatIn.addEventListener('keyup', (e) => e.stopPropagation());
+chatJan.querySelector('#cjEnv').onclick = () => { enviarChat(chatIn.value); chatIn.value = ''; chatIn.focus(); };
+chatJan.querySelector('#cjX').onclick = fecharChat;
+chatJan.addEventListener('pointerdown', (e) => e.stopPropagation());
 // ---------------- painel ----------------
-function marcarBotaoOnline() { const b = $('#bOnline'); if (!b) return; b.classList.toggle('on', ONLINE.estado === 'on'); b.querySelector('.n').textContent = ONLINE.estado === 'on' ? String(ONLINE.jog.size + 1) : ONLINE.estado === 'conectando' ? '…' : ''; }
+function marcarBotaoOnline() { if (!chatJan.hidden) desenharChatLog(); const b = $('#bOnline'); if (!b) return; b.classList.toggle('on', ONLINE.estado === 'on'); b.querySelector('.n').textContent = ONLINE.estado === 'on' ? String(ONLINE.jog.size + 1) : ONLINE.estado === 'conectando' ? '…' : ''; }
 function abrirOnline() { painelAberto = 'online'; modal.hidden = false; painel.className = 'painel largo'; atualizarPainelOnline(); }
 function atualizarPainelOnline() {
-  if (painelAberto !== 'online') return; const on = ONLINE.estado === 'on', tele = S.aneis[A_TELEPORTE] > 0, foco = document.activeElement && document.activeElement.id, rasc = { onTxt: $('#onTxt') ? $('#onTxt').value : '', onCod: $('#onCod') ? $('#onCod').value : '', onSrv: $('#onSrv') ? $('#onSrv').value : null };
+  if (painelAberto !== 'online') return;
+  const on = ONLINE.estado === 'on', con = ONLINE.estado === 'conectando', tele = S.aneis[A_TELEPORTE] > 0, foco = document.activeElement && document.activeElement.id;
+  const rasc = { onCod: $('#onCod') ? $('#onCod').value : '', onSrv: $('#onSrv') ? $('#onSrv').value : null };
   const lista = [...ONLINE.jog.values()].sort((a, b) => Math.hypot(a.x - J.x, a.z - J.z) - Math.hypot(b.x - J.x, b.z - J.z));
+  const noClaude = (naPaginaDoClaude() || bloqueadoCSP) && !window.CP_SERVIDOR, link = enderecoServidor();
+  let corpo;
+  if (noClaude) {
+    // dentro do Claude o navegador bloqueia qualquer conexão com outro site: aqui só dá para preparar a ida
+    corpo = `<div class="aviso-m"><b>${naPaginaDoClaude() ? 'Aqui dentro do Claude' : 'Nesta página'} o multiplayer não conecta.</b> ${naPaginaDoClaude() ? 'A página do Claude' : 'Esta página'} bloqueia conexões com outros sites, então nenhuma sala pode ser criada ou achada daqui. Para jogar online, abra o jogo pelo link do seu servidor no Render: lá o botão <b>Criar sala</b> funciona.</div>
+      <label class="sub" style="display:block;margin-top:10px">Link do seu servidor no Render<input id="onSrv" class="campo" placeholder="https://seu-jogo.onrender.com" value="${escH(S.cfg.servidor || '')}"></label>
+      <div class="sw" style="margin-top:8px">${link ? `<a class="bt-link" href="${escH(link)}" target="_blank" rel="noopener">Abrir o jogo no servidor ↗</a>` : '<span class="sub">Cole o link acima para aparecer o botão de abrir.</span>'}<button id="onCopiar">Copiar meu save</button></div>
+      <p class="sub" id="onMsg">O progresso daqui não vai sozinho para lá: copie o save e, no jogo aberto pelo Render, use Ajustes → Carregar save.</p>`;
+  } else {
+    const titulo = on ? (ONLINE.sala === 'MUNDO' ? 'Mundo aberto' : 'Sala privada') : con ? 'Conectando' : 'Desconectado';
+    corpo = `${window.CP_SERVIDOR ? '' : `<label class="sub" style="display:block">Link do servidor<input id="onSrv" class="campo" placeholder="https://seu-jogo.onrender.com" value="${escH(S.cfg.servidor || '')}"></label>`}
+      <div class="on-estado ${ONLINE.estado}"><span class="pt"></span><div><b>${titulo}</b>${on && ONLINE.sala !== 'MUNDO' ? `<div class="cod">Código da sala: <strong>${escH(ONLINE.sala)}</strong> <button id="onCopCod" class="mini">Copiar</button></div><small>Passe este código para os amigos entrarem.</small>` : ''}<small id="onMsg">${on ? (ONLINE.jog.size + 1) + ' jogador(es) · ping ' + (ONLINE.ping || '—') + ' ms' : escH(ONLINE.msg || 'Escolha uma opção abaixo.')}</small></div>${ONLINE.estado !== 'off' ? '<button id="onSair" class="perigo">Sair</button>' : ''}</div>
+      <div class="on-opcoes">
+        <button id="onMundo" class="op-on ${on && ONLINE.sala === 'MUNDO' ? 'on' : ''}"><b>Mundo aberto</b><small>Todos que estiverem online, sem código</small></button>
+        <button id="onCriar" class="op-on"><b>Criar sala privada</b><small>Gera um código de 5 letras para os amigos</small></button>
+        <div class="op-on"><b>Entrar com código</b><div class="sw"><input id="onCod" class="campo" maxlength="5" placeholder="ABCDE" style="width:96px;text-transform:uppercase"><button id="onEntrar">Entrar</button></div></div>
+      </div>
+      ${on ? `<h4>JOGADORES</h4><div class="on-lista">${lista.length ? lista.map((o) => `<div class="on-j"><span class="tt t${o.perfil.ti}" style="color:${corTitulo(clamp(o.perfil.ti | 0, 0, 12))}">${TITULOS[clamp(o.perfil.ti | 0, 0, 12)][1]}</span><b>${escH(o.perfil.nome)}</b><small>${o.bi >= 0 && BIOMAS[o.bi] ? escH(BIOMAS[o.bi].nome) : 'Praça'} · ${Math.round(Math.hypot(o.x - J.x, o.z - J.z))} m</small><button data-ir="${escH(o.i)}" ${tele ? '' : 'disabled title="Precisa do Anel do Teleporte"'}>Teleportar</button></div>`).join('') : '<p class="sub">Só você por enquanto.</p>'}</div>${!tele && lista.length ? '<p class="sub">Para ir até alguém, forje o Anel do Teleporte.</p>' : ''}` : ''}
+      <p class="sub">O chat fica no botão <b>Chat</b> no canto da tela (ou Enter no teclado).</p>`;
+  }
   painel.innerHTML = `<div class="cab"><h3>Multiplayer</h3><button class="fechar" id="fx" aria-label="Fechar">×</button></div>
-    <p class="sub">Cada jogador roda o próprio jogo no próprio aparelho, então não há atraso nos comandos. O servidor só mostra os outros jogadores, as habilidades deles, o chat e os domínios (cúpulas tier 3), que ajudam quem estiver dentro. Monstros, baús e pontos continuam sendo seus.</p>
-    ${naPaginaDoClaude() && !window.CP_SERVIDOR ? '<p class="aviso-m">Aqui dentro do Claude o navegador bloqueia conexões com outros servidores. Para jogar online, todos abrem o jogo pelo endereço do servidor no Render (por exemplo, <b>https://caca-prismas.onrender.com</b>). O seu progresso desta página não vai junto: use Ajustes → Copiar código e carregue lá.</p>' : ''}
-    <div class="on-form">${window.CP_SERVIDOR ? `<p class="sub">Servidor: <b>${escH(window.CP_SERVIDOR)}</b></p>` : `<label class="sub">Endereço do servidor<input id="onSrv" class="campo" placeholder="https://seu-jogo.onrender.com" value="${escH(S.cfg.servidor || '')}"></label>`}
-      <div class="sw"><button id="onMundo" ${on && ONLINE.sala === 'MUNDO' ? 'class="on"' : ''}>Entrar no mundo aberto</button><button id="onCriar">Criar sala privada</button></div>
-      <div class="sw" style="margin-top:6px"><input id="onCod" class="campo" maxlength="5" placeholder="Código" style="width:110px;text-transform:uppercase"><button id="onEntrar">Entrar na sala</button>${ONLINE.estado !== 'off' ? '<button id="onSair" class="perigo">Sair do online</button>' : ''}</div>
-      <p class="sub" id="onMsg">${on ? `Conectado · sala <b>${ONLINE.sala === 'MUNDO' ? 'Mundo aberto' : escH(ONLINE.sala)}</b>${ONLINE.sala !== 'MUNDO' ? ' (passe este código para os amigos)' : ''} · ${ONLINE.jog.size + 1} jogador(es) · ping ${ONLINE.ping || '—'} ms` : escH(ONLINE.msg || (ONLINE.estado === 'conectando' ? 'Conectando…' : 'Desconectado.'))}</p></div>
-    ${on ? `<h4>JOGADORES</h4><div class="on-lista">${lista.length ? lista.map((o) => `<div class="on-j"><span class="tt t${o.perfil.ti}" style="color:${corTitulo(clamp(o.perfil.ti | 0, 0, 12))}">${TITULOS[clamp(o.perfil.ti | 0, 0, 12)][1]}</span><b>${escH(o.perfil.nome)}</b><small>${o.bi >= 0 && BIOMAS[o.bi] ? escH(BIOMAS[o.bi].nome) : 'Praça'} · ${Math.round(Math.hypot(o.x - J.x, o.z - J.z))} m</small><button data-ir="${escH(o.i)}" ${tele ? '' : 'disabled title="Precisa do Anel do Teleporte"'}>Teleportar</button></div>`).join('') : '<p class="sub">Só você por enquanto.</p>'}</div>${!tele && lista.length ? '<p class="sub">Para ir até alguém, forje o Anel do Teleporte.</p>' : ''}
-      <h4>CHAT</h4><div class="on-chat">${ONLINE.chat.slice(-12).map((c) => `<p><b>${escH(c.nome)}:</b> ${escH(c.txt)}</p>`).join('') || '<p class="sub">Sem mensagens. No teclado, aperte Enter para falar.</p>'}</div><div class="sw"><input id="onTxt" class="campo" maxlength="160" placeholder="Escreva uma mensagem" style="flex:1"><button id="onEnviar">Enviar</button></div>` : ''}`;
+    <p class="sub">Cada jogador roda o próprio jogo, então não há atraso nos comandos. O servidor só mostra os outros jogadores, as habilidades deles, o chat e os domínios (cúpulas tier 3), que ajudam quem estiver dentro.</p>${corpo}`;
   $('#fx').onclick = fecharPainel;
-  const srv = () => { const i = $('#onSrv'); if (i) { let v = i.value.trim(); if (v && !/^https?:\/\//i.test(v)) v = 'https://' + v; S.cfg.servidor = v; sujo = true; } };
-  $('#onMundo').onclick = () => { srv(); conectar('MUNDO'); };
-  $('#onCriar').onclick = () => { srv(); conectar('NOVA'); };
-  $('#onEntrar').onclick = () => { srv(); const c = $('#onCod').value.trim().toUpperCase(); if (c.length < 4) { ONLINE.msg = 'Digite o código da sala.'; atualizarPainelOnline(); return; } conectar(c); };
+  const srv = () => { const i = $('#onSrv'); if (i) { let v = i.value.trim(); if (v && !/^https?:\/\//i.test(v)) v = 'https://' + v; S.cfg.servidor = v.replace(/\/+$/, ''); sujo = true; } };
+  if ($('#onSrv')) $('#onSrv').onchange = () => { srv(); atualizarPainelOnline(); };
+  if ($('#onCopiar')) $('#onCopiar').onclick = async () => { const c = codigoSave(); try { await navigator.clipboard.writeText(c); $('#onMsg').textContent = 'Save copiado. No jogo do Render: Ajustes → Carregar save → cole.'; } catch (e) { $('#onMsg').textContent = 'Não deu para copiar aqui: use Ajustes → Copiar código.'; } };
+  if ($('#onMundo')) $('#onMundo').onclick = () => { srv(); conectar('MUNDO'); };
+  if ($('#onCriar')) $('#onCriar').onclick = () => { srv(); conectar('NOVA'); };
+  if ($('#onEntrar')) $('#onEntrar').onclick = () => { srv(); const c = $('#onCod').value.trim().toUpperCase(); if (c.length < 4) { ONLINE.msg = 'Digite o código da sala (5 letras).'; atualizarPainelOnline(); return; } conectar(c); };
+  if ($('#onCod')) $('#onCod').onkeydown = (e) => { e.stopPropagation(); if (e.key === 'Enter') $('#onEntrar').click(); };
   if ($('#onSair')) $('#onSair').onclick = () => desconectar();
-  if ($('#onEnviar')) { const env = () => { enviarChat($('#onTxt').value); $('#onTxt').value = ''; }; $('#onEnviar').onclick = env; $('#onTxt').onkeydown = (e) => { e.stopPropagation(); if (e.key === 'Enter') env(); }; }
+  if ($('#onCopCod')) $('#onCopCod').onclick = async () => { try { await navigator.clipboard.writeText(ONLINE.sala); toast('Código copiado: ' + ONLINE.sala, '#5ac8ff'); } catch (e) { toast('Código: ' + ONLINE.sala, '#5ac8ff'); } };
   painel.querySelectorAll('[data-ir]').forEach((b) => (b.onclick = () => { const o = ONLINE.jog.get(b.dataset.ir); if (o) teleportar(o.x + 3, o.z + 3, o.perfil.nome); }));
   for (const k in rasc) if (rasc[k] !== null && $('#' + k)) $('#' + k).value = rasc[k];
   if (foco && $('#' + foco)) $('#' + foco).focus();
 }
+// enquanto conecta, o painel mostra os segundos passando
+setInterval(() => { if (ONLINE.estado === 'conectando' && painelAberto === 'online') { const el = $('#onMsg'); if (el) el.textContent = ONLINE.msg + ' (' + Math.round((performance.now() - tConexao) / 1000) + ' s)'; } }, 1000);
 // =====================================================================
 //  INVENTÁRIO, BARRA, BAÚS, RODA DE ANÉIS E DICAS
 // =====================================================================
@@ -3343,7 +3419,7 @@ addEventListener('keydown', (e) => {
   if (e.code === 'KeyJ') pedeUsar = true;
   if (e.code === 'KeyR') pedeHab = true;
   if (e.code === 'KeyL') alternarMira();
-  if ((e.code === 'Enter' || e.code === 'NumpadEnter') && !painelAberto && !criando) { e.preventDefault(); abrirChat(); }
+  if ((e.code === 'Enter' || e.code === 'NumpadEnter') && !painelAberto && !criando) { e.preventDefault(); chatAberto() ? chatIn.focus() : abrirChat(); }
   if (e.code === 'KeyT') { if (!painelAberto && !criando) usarMundial(); }
   if (e.code === 'KeyK') painelAberto === 'status' ? fecharPainel() : abrirStatus();
   if (e.code === 'KeyF') { if (!painelAberto) interagir(); }
@@ -3353,7 +3429,7 @@ addEventListener('keydown', (e) => {
   if (e.code === 'KeyQ') selecionar((S.sel + 7) % 8, false); if (e.code === 'KeyE') selecionar((S.sel + 1) % 8, false);
   if (e.code === 'KeyP' || e.code === 'Tab') { e.preventDefault(); painelAberto === 'attr' ? fecharPainel() : abrirAtributos(); }
   if (e.code === 'KeyI') painelAberto === 'inv' ? fecharPainel() : abrirInventario();
-  if (e.code === 'Escape') { fecharPainel(); fecharMenuBau(); fecharRoda(); if (criando && S.criado) { criando = false; $('#criador').hidden = true; } }
+  if (e.code === 'Escape') { fecharChat(); fecharPainel(); fecharMenuBau(); fecharRoda(); if (criando && S.criado) { criando = false; $('#criador').hidden = true; } }
   if (e.code === 'KeyH') voltarPraca();
 });
 addEventListener('keyup', (e) => { tecla[e.code] = false; });
@@ -3384,6 +3460,7 @@ cv.addEventListener('pointerup', fimPonteiro); cv.addEventListener('pointercance
 cv.addEventListener('wheel', (e) => { cam.alvoDist = clamp(cam.alvoDist + Math.sign(e.deltaY) * 1.5, 5, 30); e.preventDefault(); }, { passive: false });
 const segurar = (id, fn) => { $(id).addEventListener('pointerdown', (e) => { e.preventDefault(); e.stopPropagation(); document.body.classList.add('toque'); fn(); try { if (AC && AC.state === 'suspended') AC.resume(); } catch (er) { /* ok */ } }); };
 segurar('#bPulo', () => (pedePulo = true)); segurar('#bAcao', () => (pedeUsar = true)); segurar('#bLobby', () => voltarPraca()); segurar('#bHab', () => (pedeHab = true)); segurar('#bInter', () => interagir()); segurar('#bMira', () => alternarMira()); segurar('#bMundial', () => usarMundial());
+$('#bChat').addEventListener('pointerdown', (e) => { e.preventDefault(); e.stopPropagation(); chatAberto() ? fecharChat() : abrirChat(); });
 $('#bOnline').onclick = () => (painelAberto === 'online' ? fecharPainel() : abrirOnline());
 $('#bStatus').onclick = () => (painelAberto === 'status' ? fecharPainel() : abrirStatus());
 $('#bMapa').onclick = () => (painelAberto === 'mapa' ? fecharPainel() : abrirMapa());

@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: dao-eterno
+    name: caca-prismas
     runtime: node
     plan: free
     buildCommand: echo "sem dependencias"

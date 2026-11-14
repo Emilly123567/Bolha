@@ -1,18 +1,21 @@
 /* ============================================================
-   DAO ETERNO · servidor on-line (para o Render)
+   CAÇA-PRISMAS · servidor multiplayer (para o Render)
    Node.js puro, sem nenhuma dependência: HTTP + WebSocket
-   escritos à mão. Guarda as salas na memória.
+   escritos à mão. Tudo fica na memória.
 
-   GET  /        → o próprio jogo (se DaoEterno.html estiver nesta pasta)
+   Cada jogador roda o PRÓPRIO jogo no próprio aparelho (sem atraso
+   de comando). O servidor só repassa: posição, aparência, efeitos de
+   habilidade, domínios (cúpulas tier 3) e chat.
+
+   GET  /        → o jogo (caca-prismas.html desta pasta)
    GET  /status  → "ok" (o Render usa para saber se está vivo)
-   GET  /salas   → salas públicas abertas (JSON)
+   GET  /salas   → salas abertas (JSON)
    WS   /ws      → conexão do jogo
 
-   Mensagens (JSON):
-     cliente → servidor: {t:'criar', nome, publica} | {t:'entrar', sala, nome}
-                         e as do jogo: ola, p, chat, drop, some, pegar, mats, evento, tchau
-     servidor → cliente: {t:'sala', sala, id} | {t:'erro', msg} e as do jogo repassadas
-   O servidor é o juiz dos itens no chão: quem pede primeiro, leva.
+   cliente → servidor: {t:'entrar', sala:'MUNDO'|'NOVA'|código, nome, look, ti, au, it, mo}
+                       {t:'p', ...} {t:'perfil', ...} {t:'fx', ...} {t:'zona', ...} {t:'chat', txt} {t:'ping', c}
+   servidor → cliente: {t:'sala', sala, id, jogadores:[...]} {t:'entrou', ...} {t:'tchau', i}
+                       e as mensagens dos outros, com i = id de quem mandou
    ============================================================ */
 'use strict';
 const http = require('http');
@@ -21,29 +24,31 @@ const fs = require('fs');
 const path = require('path');
 
 const PORTA = process.env.PORT || 8790;
-const MAX_SALA = 12, MAX_MSG = 64 * 1024, MAX_SALAS = 500;
-const salas = new Map(); // código → { codigo, publica, criada, nomeDono, membros: Map(id → cliente), drops: Map(uid → item), evento, ola: Map(id → msg) }
+const MAX_SALA = 30, MAX_MSG = 32 * 1024, MAX_SALAS = 400;
+const salas = new Map(); // código → { codigo, criada, membros: Map(id → cliente) }
 let proxId = 1, jogoHtml = null;
 
-const codigo = () => { let c; do { c = Array.from({ length: 5 }, () => 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[crypto.randomInt(32)]).join(''); } while (salas.has(c)); return c; };
+const novoCodigo = () => { let c; do { c = Array.from({ length: 5 }, () => 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[crypto.randomInt(32)]).join(''); } while (salas.has(c)); return c; };
 const cors = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': '*' };
+const num = (v, lim) => { v = +v; return Number.isFinite(v) ? Math.max(-lim, Math.min(lim, v)) : 0; };
 
 // ---------- HTTP ----------
 const servidor = http.createServer((req, res) => {
   const url = req.url.split('?')[0];
   if (req.method === 'OPTIONS') { res.writeHead(204, cors); return res.end(); }
+  if (url === '/status') { res.writeHead(200, { 'Content-Type': 'text/plain' }); return res.end('ok'); }
   if (url === '/salas') {
-    const lista = [...salas.values()].filter((s) => s.publica).map((s) => ({ sala: s.codigo, dono: s.nomeDono, jogadores: s.membros.size, max: MAX_SALA }));
+    const lista = [...salas.values()].map((s) => ({ sala: s.codigo, jogadores: s.membros.size, max: MAX_SALA }));
     res.writeHead(200, Object.assign({ 'Content-Type': 'application/json; charset=utf-8' }, cors));
     return res.end(JSON.stringify(lista));
   }
   if (url === '/' || url === '/index.html') {
-    const arq = path.join(__dirname, 'DaoEterno.html');
-    if (!jogoHtml && fs.existsSync(arq)) jogoHtml = Buffer.from(fs.readFileSync(arq, 'utf8').replace('</head>', '<script>window.DAO_SERVIDOR = location.origin;</script></head>'));
+    const arq = path.join(__dirname, 'caca-prismas.html');
+    if (!jogoHtml && fs.existsSync(arq)) jogoHtml = Buffer.from(fs.readFileSync(arq, 'utf8').replace('<head>', '<head><script>window.CP_SERVIDOR = location.origin;</script>'));
     if (jogoHtml) { res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-cache' }); return res.end(jogoHtml); }
   }
   res.writeHead(200, Object.assign({ 'Content-Type': 'text/plain; charset=utf-8' }, cors));
-  res.end('Dao Eterno · servidor on-line ok · ' + salas.size + ' sala(s), ' + [...salas.values()].reduce((a, s) => a + s.membros.size, 0) + ' jogador(es)');
+  res.end('Caça-Prismas · servidor multiplayer ok · ' + salas.size + ' sala(s), ' + [...salas.values()].reduce((a, s) => a + s.membros.size, 0) + ' jogador(es)');
 });
 
 // ---------- WebSocket (RFC 6455, só o necessário) ----------
@@ -55,7 +60,6 @@ servidor.on('upgrade', (req, socket) => {
   socket.setNoDelay(true);
   novoCliente(socket);
 });
-
 function quadro(op, dados) {
   const n = dados.length; let cab;
   if (n < 126) { cab = Buffer.alloc(2); cab[1] = n; }
@@ -64,9 +68,8 @@ function quadro(op, dados) {
   cab[0] = 0x80 | op;
   return Buffer.concat([cab, dados]);
 }
-
 function novoCliente(socket) {
-  const c = { id: 's' + (proxId++).toString(36) + crypto.randomBytes(3).toString('hex'), socket, buf: Buffer.alloc(0), sala: null, vivo: Date.now(), nome: '?', msgs: 0, janela: Date.now() };
+  const c = { id: 'j' + (proxId++).toString(36) + crypto.randomBytes(2).toString('hex'), socket, buf: Buffer.alloc(0), sala: null, vivo: Date.now(), msgs: 0, janela: Date.now(), perfil: null, p: null };
   c.enviar = (obj) => { if (socket.writable) socket.write(quadro(1, Buffer.from(typeof obj === 'string' ? obj : JSON.stringify(obj)))); };
   socket.on('data', (d) => {
     c.buf = Buffer.concat([c.buf, d]);
@@ -80,74 +83,63 @@ function novoCliente(socket) {
       const tot = p + (mask ? 4 : 0) + n; if (c.buf.length < tot) return;
       let dados = c.buf.subarray(p + (mask ? 4 : 0), tot);
       if (mask) { const m = c.buf.subarray(p, p + 4); dados = Buffer.from(dados); for (let i = 0; i < dados.length; i++) dados[i] ^= m[i & 3]; }
-      c.buf = c.buf.subarray(tot);
-      c.vivo = Date.now();
+      c.buf = c.buf.subarray(tot); c.vivo = Date.now();
       if (op === 8) { socket.end(quadro(8, Buffer.alloc(0))); return; }
       if (op === 9) { socket.write(quadro(10, dados)); continue; }
-      if (op === 1) { let m; try { m = JSON.parse(dados.toString('utf8')); } catch (e) { continue; } mensagem(c, m); }
+      if (op === 1) { let m; try { m = JSON.parse(dados.toString('utf8')); } catch (e) { continue; } try { mensagem(c, m); } catch (e) { console.error('mensagem ruim:', e.message); } }
     }
   });
-  socket.on('close', () => sairDaSala(c));
-  socket.on('error', () => sairDaSala(c));
+  socket.on('close', () => sair(c));
+  socket.on('error', () => sair(c));
 }
-
 // ---------- salas ----------
 function paraSala(s, obj, exceto) { const txt = JSON.stringify(obj); for (const m of s.membros.values()) if (m !== exceto) m.enviar(txt); }
-
+function limparPerfil(m) {
+  const look = {}; if (m.look && typeof m.look === 'object') for (const k of Object.keys(m.look).slice(0, 16)) { const v = m.look[k]; if (typeof v === 'number' || typeof v === 'string') look[k] = typeof v === 'string' ? v.slice(0, 24) : v; }
+  const it = m.it && typeof m.it === 'object' ? { tipo: String(m.it.tipo || '').slice(0, 12), rar: num(m.it.rar, 20) | 0, hab: num(m.it.hab, 9999) | 0, tags: Array.isArray(m.it.tags) ? m.it.tags.slice(0, 4).map((t) => String(t).slice(0, 16)) : [] } : null;
+  return { nome: String(m.nome || '?').replace(/[<>]/g, '').slice(0, 24), look, ti: num(m.ti, 50) | 0, au: num(m.au, 1), it, mo: Number.isInteger(m.mo) ? m.mo : null };
+}
 function mensagem(c, m) {
   if (!m || typeof m.t !== 'string') return;
-  // limite simples: no máximo 60 mensagens por segundo por jogador
-  const agora = Date.now(); if (agora - c.janela > 1000) { c.janela = agora; c.msgs = 0; } if (++c.msgs > 60) return;
-  if (m.t === 'criar') {
-    if (c.sala) return; if (salas.size >= MAX_SALAS) return c.enviar({ t: 'erro', msg: 'O servidor está cheio. Tente mais tarde.' });
-    const s = { codigo: codigo(), publica: !!m.publica, criada: agora, nomeDono: String(m.nome || '?').slice(0, 24), membros: new Map(), drops: new Map(), evento: null, ola: new Map() };
-    salas.set(s.codigo, s); entrar(c, s, m.nome); return;
-  }
+  const agora = Date.now(); if (agora - c.janela > 1000) { c.janela = agora; c.msgs = 0; } if (++c.msgs > 40) return; // no máximo 40 mensagens por segundo
   if (m.t === 'entrar') {
-    if (c.sala) return; const s = salas.get(String(m.sala || '').toUpperCase());
-    if (!s) return c.enviar({ t: 'erro', msg: 'Sala não encontrada. Confira o código.' });
-    if (s.membros.size >= MAX_SALA) return c.enviar({ t: 'erro', msg: 'A sala está cheia.' });
-    entrar(c, s, m.nome); return;
+    let cod = String(m.sala || 'MUNDO').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 8) || 'MUNDO', s;
+    if (cod === 'NOVA') { if (salas.size >= MAX_SALAS) return c.enviar({ t: 'erro', msg: 'O servidor está cheio. Tente mais tarde.' }); cod = novoCodigo(); }
+    s = salas.get(cod);
+    if (!s) { if (cod !== 'MUNDO' && m.sala !== 'NOVA' && String(m.sala).toUpperCase() !== 'NOVA') return c.enviar({ t: 'erro', msg: 'Sala não encontrada. Confira o código.' }); s = { codigo: cod, criada: agora, membros: new Map() }; salas.set(cod, s); }
+    s.vazia = 0;
+    if (s.membros.size >= MAX_SALA) return c.enviar({ t: 'erro', msg: 'A sala está cheia (' + MAX_SALA + ' jogadores).' });
+    if (c.sala) sair(c);
+    c.perfil = limparPerfil(m); c.sala = s;
+    c.enviar({ t: 'sala', sala: s.codigo, id: c.id, jogadores: [...s.membros.values()].map((o) => Object.assign({ i: o.id, p: o.p }, o.perfil)) });
+    s.membros.set(c.id, c); paraSala(s, Object.assign({ t: 'entrou', i: c.id }, c.perfil), c); return;
   }
+  if (m.t === 'ping') return c.enviar({ t: 'pong', c: num(m.c, 1e12) });
   const s = c.sala; if (!s) return;
-  m.i = m.t === 'p' || m.t === 'ola' || m.t === 'mats' ? c.id : m.i; // ninguém fala em nome de outro
+  let out;
   switch (m.t) {
-    case 'ola': s.ola.set(c.id, m); c.nome = String(m.nome || '?').slice(0, 24); break;
-    case 'drop': if (m.it && m.it.uid) { m.it.dono = c.id; s.drops.set(m.it.uid, m.it); } break;
-    case 'some': { const it = s.drops.get(m.uid); if (!it || it.dono !== c.id) return; s.drops.delete(m.uid); break; }
-    case 'pegar': { const it = s.drops.get(m.uid); if (!it) return; s.drops.delete(m.uid); paraSala(s, { t: 'pego', uid: m.uid, quem: c.id }); return; }
-    case 'pego': if (!s.drops.has(m.uid)) return; s.drops.delete(m.uid); m.quem = c.id; break;
-    case 'evento': s.evento = { id: m.id, ate: agora + 240000 }; break;
-    case 'chat': m.txt = String(m.txt || '').slice(0, 160); m.nome = c.nome; break;
-    case 'p': case 'mats': case 'tchau': break;
+    case 'p': c.p = { x: num(m.x, 1e5), y: num(m.y, 1e4), z: num(m.z, 1e5), r: num(m.r, 100) }; out = { t: 'p', i: c.id, x: c.p.x, y: c.p.y, z: c.p.z, r: c.p.r, a: num(m.a, 255) | 0, hp: num(m.hp, 1), bi: num(m.bi, 999) | 0, v: m.v ? 1 : 0 }; break;
+    case 'perfil': c.perfil = limparPerfil(m); out = Object.assign({ t: 'perfil', i: c.id }, c.perfil); break;
+    case 'fx': out = { t: 'fx', i: c.id, h: num(m.h, 9999) | 0, x: num(m.x, 1e5), z: num(m.z, 1e5), r: num(m.r, 100) }; break;
+    case 'zona': out = { t: 'zona', i: c.id, el: String(m.el || '').slice(0, 10), x: num(m.x, 1e5), z: num(m.z, 1e5), dur: num(m.dur, 60) }; break;
+    case 'chat': { const txt = String(m.txt || '').slice(0, 160).trim(); if (!txt) return; out = { t: 'chat', i: c.id, nome: c.perfil ? c.perfil.nome : '?', txt }; break; }
     default: return;
   }
-  paraSala(s, m, c);
+  paraSala(s, out, c);
 }
-
-function entrar(c, s, nome) {
-  c.sala = s; c.nome = String(nome || '?').slice(0, 24); s.membros.set(c.id, c);
-  c.enviar({ t: 'sala', sala: s.codigo, id: c.id, dono: s.nomeDono });
-  for (const o of s.ola.values()) c.enviar(Object.assign({}, o, { eco: 1 }));
-  c.enviar({ t: 'estado', drops: [...s.drops.values()].map((it) => Object.assign({}, it, { meu: 0 })), evento: s.evento && s.evento.ate > Date.now() ? s.evento.id : null });
-}
-
-function sairDaSala(c) {
+function sair(c) {
   const s = c.sala; if (!s) return; c.sala = null;
-  s.membros.delete(c.id); s.ola.delete(c.id);
-  for (const [uid, it] of s.drops) if (it.dono === c.id) s.drops.delete(uid);
-  paraSala(s, { t: 'tchau', i: c.id });
-  if (!s.membros.size) salas.delete(s.codigo);
+  s.membros.delete(c.id); paraSala(s, { t: 'tchau', i: c.id });
+  if (!s.membros.size && s.codigo !== 'MUNDO') s.vazia = Date.now(); // sala privada vazia fica guardada 10 min (para quem cair poder voltar)
 }
-
 // ---------- vivo? (o Render e alguns roteadores derrubam conexões paradas) ----------
 setInterval(() => {
   const agora = Date.now();
+  for (const [cod, s] of salas) if (s.vazia && !s.membros.size && agora - s.vazia > 600000) salas.delete(cod);
   for (const s of salas.values()) for (const c of s.membros.values()) {
     if (agora - c.vivo > 70000) { c.socket.destroy(); continue; }
     if (c.socket.writable) c.socket.write(quadro(9, Buffer.alloc(0)));
   }
 }, 25000);
-
 process.on('uncaughtException', (e) => console.error('erro (o servidor continua):', e));
-servidor.listen(PORTA, '0.0.0.0', () => console.log('Dao Eterno · servidor on-line na porta ' + PORTA));
+servidor.listen(PORTA, '0.0.0.0', () => console.log('Caça-Prismas · servidor multiplayer na porta ' + PORTA));

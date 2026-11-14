@@ -1,7 +1,7 @@
 {
-  "name": "dao-eterno-servidor",
+  "name": "caca-prismas-servidor",
   "version": "1.0.0",
-  "description": "Servidor on-line do Dao Eterno 2D (salas, chat, itens no chão). Sem dependências.",
+  "description": "Servidor multiplayer do Caça-Prismas (sem dependências)",
   "main": "server.js",
   "scripts": { "start": "node server.js" },
   "engines": { "node": ">=18" },
