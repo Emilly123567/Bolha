@@ -1,4 +1,4 @@
-# Caça-Prismas · servidor multiplayer
+# Bolha · servidor multiplayer
 
 Servidor em Node.js puro (sem nenhuma dependência). Ele entrega o jogo e repassa
 posição, aparência, habilidades, domínios e chat entre os jogadores.

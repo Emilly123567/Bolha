@@ -1,5 +1,5 @@
 /* ============================================================
-   CAÇA-PRISMAS · servidor multiplayer (para o Render)
+   BOLHA · servidor multiplayer (para o Render)
    Node.js puro, sem nenhuma dependência: HTTP + WebSocket
    escritos à mão. Tudo fica na memória.
 
@@ -48,7 +48,7 @@ const servidor = http.createServer((req, res) => {
     if (jogoHtml) { res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-cache' }); return res.end(jogoHtml); }
   }
   res.writeHead(200, Object.assign({ 'Content-Type': 'text/plain; charset=utf-8' }, cors));
-  res.end('Caça-Prismas · servidor multiplayer ok · ' + salas.size + ' sala(s), ' + [...salas.values()].reduce((a, s) => a + s.membros.size, 0) + ' jogador(es)');
+  res.end('Bolha · servidor multiplayer ok · ' + salas.size + ' sala(s), ' + [...salas.values()].reduce((a, s) => a + s.membros.size, 0) + ' jogador(es)');
 });
 
 // ---------- WebSocket (RFC 6455, só o necessário) ----------
@@ -142,4 +142,4 @@ setInterval(() => {
   }
 }, 25000);
 process.on('uncaughtException', (e) => console.error('erro (o servidor continua):', e));
-servidor.listen(PORTA, '0.0.0.0', () => console.log('Caça-Prismas · servidor multiplayer na porta ' + PORTA));
+servidor.listen(PORTA, '0.0.0.0', () => console.log('Bolha · servidor multiplayer na porta ' + PORTA));

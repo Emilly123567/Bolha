@@ -1,7 +1,7 @@
 {
   "name": "caca-prismas-servidor",
   "version": "1.0.0",
-  "description": "Servidor multiplayer do Caça-Prismas (sem dependências)",
+  "description": "Servidor multiplayer do Bolha (sem dependências)",
   "main": "server.js",
   "scripts": { "start": "node server.js" },
   "engines": { "node": ">=18" },
