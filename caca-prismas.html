@@ -440,6 +440,8 @@ body.toque:not(.controle) #habHud { display: none; }
 @media (max-width: 640px) { #bOnline .txt { display: none; } }
 @media (prefers-reduced-motion: reduce) { #ganho span, .premio { animation: none; opacity: 1; } }
 
+#clima .proxEv { font: 700 11px var(--f-texto); color: var(--tinta-2); white-space: nowrap; }
+#clima.quieto { opacity: 0.75; padding-top: 4px; padding-bottom: 4px; }
 /* ---- atualização Bolha ---- */
 .sw button.pri, .bts button.pri, .conta button.pri { width: auto; margin-top: 0; padding: 9px 16px; font: 400 14px var(--f-titulo); color: #2a1c00; background: linear-gradient(180deg, #ffe680, #ffc23a); box-shadow: 0 3px 0 #b37a00; border: 0; }
 .sw button.pri:disabled, .bts button.pri:disabled { color: #8a8070; background: rgba(255, 255, 255, 0.08); box-shadow: none; font: 700 13px var(--f-texto); }
@@ -3244,18 +3246,25 @@ const EVENTOS = {
   meteoros: { nome: 'Chuva de Meteoros', cor: '#ff8a3a', dur: 150, d: 'Meteoros caem perto de você: fique de olho nos círculos', bom: 0 },
 };
 let tMeteoro = 0;
+// os eventos seguem só o relógio: a cada 2:30 sorteia 1 evento (com chance de vir um duplo), esteja você onde estiver
+const CICLO_EVENTO = 150, CHANCE_DUPLO = 0.25;
 function atualizarClima(dt) {
   const t = agoraS();
-  if (!CLIMA.prox) CLIMA.prox = t + 240;
-  for (let i = CLIMA.lista.length - 1; i >= 0; i--) { const e = CLIMA.lista[i]; if (t > e.fim) { banner(e.nome + ' acabou', CLIMA.lista.length > 1 ? 'O outro evento continua' : 'O céu volta ao normal'); CLIMA.lista.splice(i, 1); if (!CLIMA.lista.length) CLIMA.prox = t + 360 + Math.random() * 240; } }
+  if (!CLIMA.prox) CLIMA.prox = t + CICLO_EVENTO;
+  for (let i = CLIMA.lista.length - 1; i >= 0; i--) { const e = CLIMA.lista[i]; if (t > e.fim) { banner(e.nome + ' acabou', CLIMA.lista.length > 1 ? 'O outro evento continua' : 'O céu volta ao normal'); CLIMA.lista.splice(i, 1); } }
   CLIMA.ativo = CLIMA.lista[0] || null; CLIMA.fim = CLIMA.ativo ? CLIMA.ativo.fim : 0;
-  if (!CLIMA.lista.length && t > CLIMA.prox && S.criado) {
-    const ks = Object.keys(EVENTOS), a = ks[Math.floor(Math.random() * ks.length)]; iniciarEvento(a);
-    if (Math.random() < 0.22) { const resto = ks.filter((k) => k !== a), b = resto[Math.floor(Math.random() * resto.length)]; depois(2.5, () => { iniciarEvento(b); banner('EVENTO DUPLO!', EVENTOS[a].nome + ' + ' + EVENTOS[b].nome); }); }
+  if (t >= CLIMA.prox) {
+    CLIMA.prox = t + CICLO_EVENTO;
+    const livres = () => Object.keys(EVENTOS).filter((k) => !evento(k)), sortear = (l) => l[Math.floor(Math.random() * l.length)];
+    const l1 = livres();
+    if (l1.length) { const a = sortear(l1); iniciarEvento(a);
+      if (Math.random() < CHANCE_DUPLO) { const l2 = livres(); if (l2.length) { const b = sortear(l2); depois(2.5, () => { iniciarEvento(b); banner('EVENTO DUPLO!', EVENTOS[a].nome + ' + ' + EVENTOS[b].nome); }); } } }
   }
   const el = $('#clima');
-  if (CLIMA.lista.length) { el.hidden = false; el.style.setProperty('--c', CLIMA.lista[0].cor); el.innerHTML = CLIMA.lista.map((e) => { const r = Math.max(0, e.fim - t); return `<b style="color:${e.cor}">${e.nome}</b><span>${e.d}</span><em>${Math.floor(r / 60)}:${String(Math.floor(r % 60)).padStart(2, '0')}</em>`; }).join('<i class="sep"></i>'); }
-  else el.hidden = true;
+  const mmss = (r) => Math.floor(r / 60) + ':' + String(Math.floor(r % 60)).padStart(2, '0'), prox = `<small class="proxEv">próximo evento em ${mmss(Math.max(0, CLIMA.prox - t))}</small>`;
+  el.hidden = false;
+  if (CLIMA.lista.length) { el.classList.remove('quieto'); el.style.setProperty('--c', CLIMA.lista[0].cor); el.innerHTML = CLIMA.lista.map((e) => `<b style="color:${e.cor}">${e.nome}</b><span>${e.d}</span><em>${mmss(Math.max(0, e.fim - t))}</em>`).join('<i class="sep"></i>') + prox; }
+  else { el.classList.add('quieto'); el.style.setProperty('--c', '#9aa4c0'); el.innerHTML = prox; }
   if (evento('meteoros') && J.vivo && Math.hypot(J.x, J.z) > 45) { tMeteoro -= dt; if (tMeteoro <= 0) { tMeteoro = 2.2 + Math.random() * 1.5; const a = Math.random() * TAU, r = Math.random() * 9, x = J.x + Math.cos(a) * r, z = J.z + Math.sin(a) * r; areaAviso(x, z, 4.5, 1.3, E.vidaMax.mul(0.14)); fxQueda(x, z, G.octa, '#ff7a2a', '#ffd23a', [2.4, 2.4, 2.4], 1.3, (x2, z2) => { fxAnel(x2, z2, 1, 6, '#ff7a2a', 0.4); som('explode'); }); } }
 }
 function iniciarEvento(k) { const ev = EVENTOS[k]; if (!ev || evento(k)) return; CLIMA.lista.push(Object.assign({ k, fim: agoraS() + ev.dur }, ev)); CLIMA.ativo = CLIMA.lista[0]; est().eventos++; banner(ev.nome, ev.d); som(ev.bom ? 'arcanjo' : 'chefe'); }
