@@ -363,6 +363,7 @@ body.toque:not(.controle) #habHud { display: none; }
 #chefe { top: calc(108px + env(safe-area-inset-top, 0px)) !important; }
 #bMira { grid-column: 1; grid-row: 2; } #bMundial { grid-column: 2; grid-row: 1; }
 #bMira svg, #bMundial svg { width: 22px; height: 22px; }
+#bMundial.cd { opacity: 0.55; filter: grayscale(0.6); }
 .titulo-g { text-align: center; padding: 14px; border-radius: 14px; background: rgba(255, 255, 255, 0.04); margin-bottom: 12px; }
 .titulo-g .tt { font-size: 18px; display: block; }
 .titulo-g b { display: block; font-size: 16px; margin-top: 2px; }
@@ -1504,7 +1505,7 @@ function novoS() { return { pts: D.Z, total: D.Z, at: { espada: D.Z, magia: D.Z,
 // ---------------- save com versão, migração e cópias de segurança ----------------
 // Regra para as próximas atualizações: nunca apagar campos do save; só acrescentar.
 // Cada mudança de formato ganha um passo em MIGRAR, e tudo que o save não tiver vem de novoS().
-const VERSAO_SAVE = 5;
+const VERSAO_SAVE = 6;
 const BK = CONTA.id === 'c1' && CONTA.chave === 'cacaprismas:v2' ? ['cacaprismas:bk0', 'cacaprismas:bk1', 'cacaprismas:bk2'] : [0, 1, 2].map((i) => CHAVE + ':bk' + i);
 function reviverItem(it) {
   if (!it || typeof it !== 'object' || !it.tipo) return null;
@@ -1528,6 +1529,8 @@ const MIGRAR = {
     return Object.assign({ est: {}, build: { xp: {}, uso: {} }, mundial: null, chefesVencidos: {} }, d, { mat: novo });
   },
   // v4 → v5 (Bolha: mundo em regiões, 65 chefes): os chefes passam a ser lembrados pelo id, não pela região; todos começam vivos
+  // v5 → v6: itens mundiais não quebram mais; o que estava na mão vira um item seu, já forjado
+  5: (d) => Object.assign({}, d, { mundiaisFeitos: Number.isInteger(d.mundial) ? { [d.mundial]: 1 } : {}, mundiaisTem: Number.isInteger(d.mundial) ? [d.mundial] : [], cdMundial: 0 }),
   4: (d) => Object.assign({ marca: null, selos: {}, visitadas: {}, reinosVistos: {} }, d, { chefeMorte: {} }),
 };
 function lerSave(txt) {
@@ -1542,7 +1545,7 @@ function lerSave(txt) {
   n.equip = Object.assign({ capacete: null, peitoral: null, calca: null, bota: null }, d.equip || {}); for (const k in n.equip) n.equip[k] = reviverItem(n.equip[k]);
   n.mat = d.mat && typeof d.mat === 'object' ? d.mat : {}; n.aneis = d.aneis && typeof d.aneis === 'object' ? d.aneis : {};
   n.roda = (Array.isArray(d.roda) ? d.roda : []).slice(0, 5); while (n.roda.length < 5) n.roda.push(null);
-  n.chefeMorte = d.chefeMorte || {}; n.habVistas = d.habVistas || {}; n.arcVit = Array.isArray(d.arcVit) ? d.arcVit.concat([0, 0, 0, 0]).slice(0, 4) : [0, 0, 0, 0]; n.buffs = d.buffs || {}; n.est = d.est || {}; n.build = d.build && d.build.xp ? d.build : { xp: {}, uso: {} }; n.mundial = Number.isInteger(d.mundial) ? d.mundial : null; n.chefesVencidos = d.chefesVencidos || {}; n.marca = d.marca && MARCAS[d.marca.i] ? { i: d.marca.i | 0, nv: clamp(d.marca.nv | 0, 1, 5) } : null; n.selos = d.selos || {}; n.visitadas = d.visitadas || {}; n.reinosVistos = d.reinosVistos || {};
+  n.chefeMorte = d.chefeMorte || {}; n.habVistas = d.habVistas || {}; n.arcVit = Array.isArray(d.arcVit) ? d.arcVit.concat([0, 0, 0, 0]).slice(0, 4) : [0, 0, 0, 0]; n.buffs = d.buffs || {}; n.est = d.est || {}; n.build = d.build && d.build.xp ? d.build : { xp: {}, uso: {} }; n.mundiaisFeitos = d.mundiaisFeitos || {}; n.mundiaisTem = Array.isArray(d.mundiaisTem) ? d.mundiaisTem.filter((i) => MUNDIAIS[i]) : []; n.cdMundial = +d.cdMundial || 0; n.mundial = Number.isInteger(d.mundial) && MUNDIAIS[d.mundial] ? d.mundial : null; if (n.mundial !== null && !n.mundiaisTem.includes(n.mundial)) { n.mundiaisTem.push(n.mundial); n.mundiaisFeitos[n.mundial] = 1; } n.chefesVencidos = d.chefesVencidos || {}; n.marca = d.marca && MARCAS[d.marca.i] ? { i: d.marca.i | 0, nv: clamp(d.marca.nv | 0, 1, 5) } : null; n.selos = d.selos || {}; n.visitadas = d.visitadas || {}; n.reinosVistos = d.reinosVistos || {};
   // ids únicos: garante que o próximo id não repete nenhum item salvo
   let maior = 0; for (const it of [...n.inv, ...n.barra, ...Object.values(n.equip)]) if (it && it.id > maior) maior = it.id; n.nid = Math.max(n.nid || 1, maior + 1);
   return n;
@@ -1565,7 +1568,7 @@ try {
 } catch (e) { /* sem armazenamento: o jogo funciona igual, só não lembra */ }
 let sujo = false, tSalvar = 0, tCopia = 0, ultimoSave = 0;
 function dadosSave() { // buffs ativos também são guardados (tempo que falta)
-  try { const t = agoraS(), b = {}; for (const k in BUFF) if (BUFF[k].fim > t) b[k] = { v: BUFF[k].v, resta: BUFF[k].fim - t, dur: BUFF[k].dur }; S.buffs = b; } catch (e) { /* ok */ }
+  try { const t = agoraS(), b = {}; for (const k in BUFF) if (BUFF[k].fim > t) b[k] = { v: BUFF[k].v, resta: BUFF[k].fim - t, dur: BUFF[k].dur, nome: BUFF[k].nome, cor: BUFF[k].cor }; S.buffs = b; } catch (e) { /* ok */ }
   S.versao = VERSAO_SAVE; S.salvoEm = Date.now(); return JSON.stringify(S);
 }
 function salvar() { try { localStorage.setItem(CHAVE, dadosSave()); ultimoSave = Date.now(); } catch (e) { /* cheio ou bloqueado */ } sujo = false; }
@@ -1959,10 +1962,15 @@ const BUFF_INFO = {
   aFortuna: ['Anel da Fortuna', '#ffd84a'], aEgide: ['Égide', '#a8c8ff'], aPressa: ['Pressa', '#7ae0ff'], aFuria: ['Anel da Fúria', '#ff5a3a'], aVampiro: ['Vampiro', '#d0203a'], aPrisma: ['Prisma', '#fff3a8'], aRessurreicao: ['Ressurreição', '#ff9a3a'],
 };
 function buff(k, v, dur) { const t = agoraS(), b = BUFF[k]; if (b && b.fim > t) { b.v = Math.max(b.v, v); b.fim = Math.max(b.fim, t + dur); b.dur = Math.max(b.dur, dur); } else BUFF[k] = { v, fim: t + dur, dur }; buffMudou = true; }
-const bv = (k) => { const b = BUFF[k]; return b && b.fim > agoraS() ? b.v : 0; };
+// poções ficam em 'efeito#nível' (ex.: sorte#2): níveis diferentes valem ao mesmo tempo e se somam
+const MAX_POCAO = 7200; // tempo máximo acumulado de uma mesma poção (2 h)
+function buffPocao(k, tier, v, dur, nome, cor) { const t = agoraS(), ch = k + '#' + tier, b = BUFF[ch]; if (b && b.fim > t) { b.fim = Math.min(t + MAX_POCAO, b.fim + dur); b.dur = b.fim - t; b.v = v; } else BUFF[ch] = { v, fim: t + dur, dur, nome, cor }; buffMudou = true; return BUFF[ch].fim - t; }
+const bv = (k) => { const t = agoraS(); let s = 0; const b = BUFF[k]; if (b && b.fim > t) s += b.v; for (let i = 0; i < 7; i++) { const p = BUFF[k + '#' + i]; if (p && p.fim > t) s += p.v; } return s; };
+function acabarBuff(k) { for (const c of [k, 0, 1, 2, 3, 4, 5, 6].map((i) => (i === k ? k : k + '#' + i))) if (BUFF[c]) BUFF[c].fim = 0; buffMudou = true; }
+function consumirBuff(k) { if (BUFF[k] && BUFF[k].fim > agoraS()) { delete BUFF[k]; return true; } for (let i = 0; i < 7; i++) if (BUFF[k + '#' + i] && BUFF[k + '#' + i].fim > agoraS()) { delete BUFF[k + '#' + i]; buffMudou = true; return true; } return false; }
 let buffMudou = false, buffAssin = '';
 // buffs que estavam ativos quando o jogo foi salvo continuam com o tempo que faltava
-try { for (const k in S.buffs || {}) { const b = S.buffs[k]; if (b && b.resta > 0) BUFF[k] = { v: +b.v || 0, fim: agoraS() + Math.min(b.resta, 3600), dur: b.dur || b.resta }; } } catch (e) { /* ok */ }
+try { for (const k in S.buffs || {}) { const b = S.buffs[k]; if (b && b.resta > 0) BUFF[k] = { v: +b.v || 0, fim: agoraS() + Math.min(b.resta, MAX_POCAO), dur: b.dur || b.resta, nome: b.nome, cor: b.cor }; } } catch (e) { /* ok */ }
 // efeitos que valem enquanto o jogador está dentro de uma zona de suporte (recalculados a cada quadro)
 const ZB = { dano: 0, recarga: 0, vel: 0, reducao: 0, cura: 0, limpa: 0, roubo: 0, crit: 0, critD: 0, pontos: 0, imune: 0, pulo: 0, lentoJ: 0 };
 const evento = (k) => CLIMA.lista.some((e) => e.k === k);
@@ -2215,7 +2223,7 @@ function usarHabilidade() {
   const h = HAB[it.hab]; CDH[it.id] = agoraS() + h.cd * multRecarga(); CDH.ult = { id: it.id, dur: h.cd * multRecarga() };
   if (!S.habVistas) S.habVistas = {}; S.habVistas[h.id] = 1; est().habilidades++;
   executarHab(h, it); som('hab'); J.golpe = 0.3; if (ONLINE.estado === 'on') enviar({ t: 'fx', h: h.id, x: +J.x.toFixed(1), z: +J.z.toFixed(1), r: +J.rot.toFixed(2) });
-  if (bv('invis')) BUFF.invis.fim = 0;
+  if (bv('invis')) acabarBuff('invis');
 }
 function executarHab(h, it) {
   const mag = h.arma === 'cajado', el = h.el, cor = EL[el].cor, cor2 = EL[el].cor2, anti = it.tags && it.tags.includes('antimagia');
@@ -2992,10 +3000,10 @@ function atualizarHUD2(dt) {
     const bi = $('#bHabCd'); if (bi) bi.style.setProperty('--p', p + '%'); hh.hidden = false;
   } else { hh.hidden = true; hh.dataset.h = ''; }
   if (hudT > 0) return; hudT = 0.25;
-  const bm = $('#bMundial'); bm.hidden = S.mundial === null || S.mundial === undefined;
+  const bm = $('#bMundial'); bm.hidden = S.mundial === null || S.mundial === undefined; if (!bm.hidden) { const r = cdMundialResta(); bm.lastChild.textContent = r > 0 ? mmssM(r) : 'Mundial'; bm.classList.toggle('cd', r > 0); }
   // buffs
   const lista = Object.keys(BUFF).filter((k) => BUFF[k].fim > t);
-  $('#buffs').innerHTML = lista.map((k) => { const b = BUFF[k], inf = BUFF_INFO[k] || [k, '#fff'], r = b.fim - t; return `<span class="bf" style="--c:${inf[1]}"><i></i>${inf[0]} ${r > 60 ? Math.ceil(r / 60) + ' min' : Math.ceil(r) + ' s'}<u style="width:${(r / b.dur) * 100}%"></u></span>`; }).join('')
+  $('#buffs').innerHTML = lista.map((k) => { const b = BUFF[k], inf = b.nome ? [b.nome, b.cor] : BUFF_INFO[k] || [k, '#fff'], r = b.fim - t; return `<span class="bf" style="--c:${inf[1]}"><i></i>${inf[0]} ${r > 60 ? Math.ceil(r / 60) + ' min' : Math.ceil(r) + ' s'}<u style="width:${(r / b.dur) * 100}%"></u></span>`; }).join('')
     + (ZB.dano || ZB.recarga || ZB.vel || ZB.reducao || ZB.cura ? '<span class="bf" style="--c:#fff3a0"><i></i>Na área de suporte</span>' : '');
   // altar por perto
   // algo para interagir por perto (altar, forja, portal, elevador de luz, santuário…)
@@ -3289,8 +3297,9 @@ function atualizarMira(dt) {
 // ---------------- itens mundiais ----------------
 function usarMundial() {
   if (S.mundial === null || S.mundial === undefined || !J.vivo) { aviso('Você não tem um item mundial. Forje um no Castelo Antigo de Avalan.', 2.4); return; }
+  const falta = cdMundialResta(); if (falta > 0) { aviso(MUNDIAIS[S.mundial].nome + ' está recarregando: ' + mmssM(falta), 1.8); return; }
   const W = MUNDIAIS[S.mundial], P = D.max(E.espada, E.magia).mul(70), cor = W.cor, cor2 = '#ffffff', x0 = J.x, z0 = J.z, R0 = 45;
-  S.mundial = null; sujo = true; remontar(); est().mundiais++; som('arcanjo'); banner(W.nome, 'Todos os ataques de chefes e monstros param por 1 minuto');
+  S.cdMundial = Date.now() + CD_MUNDIAL * 1000; sujo = true; est().mundiais++; som('arcanjo'); banner(W.nome, 'Todos os ataques de chefes e monstros param por 1 minuto');
   // cancela tudo: projéteis, áreas de aviso e ondas dos inimigos
   for (let i = projs.length - 1; i >= 0; i--) if (!projs[i].meu) { tirar(projs[i].no); projs.splice(i, 1); }
   for (const a of avisos) tirar(a.no); avisos.length = 0; ONDAS.length = 0;
@@ -3302,12 +3311,18 @@ function usarMundial() {
     if (W.k === 'martelo') fxRaio([x, chao(x, z) + 40, z], [x, chao(x, z), z], cor, cor2, 0.4); else if (W.k === 'asa') fxQueda(x, z, G.pir, cor, cor2, [0.6, 3, 0.2], 0.6, null, true); else if (W.k === 'calice') fxAnel(x, z, 0.5, 6, cor, 0.5); else fxPilar(x, z, 1.4, 18, cor, cor2, 0.6); });
   depois(1.2, () => { for (const m of mobs.slice()) if (Math.hypot(m.x - x0, m.z - z0) < R0 + m.esp.raio * m.tam) causarDano(m, P, { magia: true, el: W.el, anti: true, dx: m.x - x0, dz: m.z - z0, critico: false }); });
 }
+// itens mundiais não quebram: cada um só pode ser forjado UMA vez na vida, e depois recarrega
+const CD_MUNDIAL = 300;
+const cdMundialResta = () => Math.max(0, ((S.cdMundial || 0) - Date.now()) / 1000);
+const mmssM = (r) => Math.floor(r / 60) + ':' + String(Math.floor(r % 60)).padStart(2, '0');
+function segurarMundial(i) { if (!(S.mundiaisTem || []).includes(i)) return; S.mundial = i; sujo = true; remontar(); desenharBarra(); toast(MUNDIAIS[i].nome + ' na mão esquerda', MUNDIAIS[i].cor); }
 function forjarMundial(i) {
   const custo = custoMundial(i), aneis = Object.keys(S.aneis).filter((k) => +k !== A_TELEPORTE && S.aneis[k] > 0), qtd = aneis.reduce((a, k) => a + S.aneis[k], 0);
-  if (S.mundial !== null && S.mundial !== undefined) return aviso('Você já segura um item mundial na mão esquerda.', 2);
+  if (S.mundiaisFeitos && S.mundiaisFeitos[i]) return aviso(MUNDIAIS[i].nome + ' é único e já foi forjado.', 2);
   if (qtd < 3) return aviso('É preciso sacrificar pelo menos 3 anéis (todos menos o de teleporte).', 2.5);
   if (!temMats(custo)) return aviso('Faltam materiais.', 2);
   for (const [id, n] of custo) S.mat[id] -= n; for (const k of aneis) { delete S.aneis[k]; for (let d = 0; d < 5; d++) if (S.roda[d] === +k) S.roda[d] = null; }
+  if (!S.mundiaisFeitos) S.mundiaisFeitos = {}; if (!S.mundiaisTem) S.mundiaisTem = []; S.mundiaisFeitos[i] = 1; S.mundiaisTem.push(i);
   S.mundial = i; sujo = true; remontar(); desenharBarra(); fecharPainel(); som('arcanjo');
   banner(MUNDIAIS[i].nome, qtd + ' anéis sacrificados · use com T, ◀ no controle ou o botão da mão esquerda');
   fxPilar(AVALAN.forja.x, AVALAN.forja.z, 3, 60, MUNDIAIS[i].cor, '#ffffff', 2); fxAnel(AVALAN.forja.x, AVALAN.forja.z, 1, 14, MUNDIAIS[i].cor, 0.8);
@@ -4055,15 +4070,15 @@ function abrirStatus(aba) {
 // ---------------- Forja Mundial (Castelo Antigo de Avalan) ----------------
 function abrirForjaMundial() {
   painelAberto = 'forjaM'; modal.hidden = false; painel.className = 'painel largo';
-  const aneis = Object.keys(S.aneis).filter((k) => +k !== A_TELEPORTE && S.aneis[k] > 0), qtd = aneis.reduce((a, k) => a + S.aneis[k], 0), tem = S.mundial !== null && S.mundial !== undefined;
+  const aneis = Object.keys(S.aneis).filter((k) => +k !== A_TELEPORTE && S.aneis[k] > 0), qtd = aneis.reduce((a, k) => a + S.aneis[k], 0), feitos = S.mundiaisFeitos || {}, meus = S.mundiaisTem || [], cdR = cdMundialResta();
   const ref = D.max(E.espada, E.magia);
   painel.innerHTML = `<div class="cab"><h3>Forja Mundial de Avalan</h3><button class="fechar" id="fx" aria-label="Fechar">×</button></div>
-    <p class="sub">Itens mundiais causam 70x o poder do seu item atual (hoje: <b>${fmt(ref.mul(70).floor())}</b>) numa área gigante e <b>cancelam todos os ataques</b> de chefes e monstros por 1 minuto. Só servem uma vez, só têm a habilidade (não dá para atacar com eles) e ocupam a mão esquerda: um por vez. Para forjar é preciso <b>sacrificar todos os seus anéis</b>, menos o de teleporte (mínimo 3). Você tem ${qtd} para sacrificar.</p>
-    ${tem ? `<p class="aviso-m">Na sua mão esquerda: <b style="color:${MUNDIAIS[S.mundial].cor}">${MUNDIAIS[S.mundial].nome}</b>. Use-o antes de forjar outro.</p>` : ''}
-    <div class="forja">${MUNDIAIS.map((W, i) => { const c = custoMundial(i), ok = temMats(c) && qtd >= 3 && !tem; return `<div class="anel ${ok ? 'pode' : ''}" style="--c:${W.cor}"><div class="ai"><svg viewBox="0 0 24 24"><path d="M12 2 21 8v8l-9 6-9-6V8z" fill="${W.cor}" stroke="#fff" stroke-width=".8"/><circle cx="12" cy="12" r="3" fill="#fff"/></svg></div><div class="ad"><b style="color:${W.cor}">${W.nome}</b> <span class="unica">Mundial</span><p>${W.d}. Elemento: ${EL[W.el].nome}.</p>
+    <p class="sub">Itens mundiais causam 70x o poder do seu item atual (hoje: <b>${fmt(ref.mul(70).floor())}</b>) numa área gigante e <b>cancelam todos os ataques</b> de chefes e monstros por 1 minuto. <b>Não quebram</b>: depois de usar, recarregam por 5 minutos. Mas cada um é <b>único</b>: só pode ser forjado uma vez. Só têm a habilidade (não dá para atacar com eles) e ficam na mão esquerda, um por vez: troque qual segurar aqui. Para forjar é preciso <b>sacrificar todos os seus anéis</b>, menos o de teleporte (mínimo 3). Você tem ${qtd} para sacrificar.</p>
+    ${meus.length ? `<p class="sub">Seus itens mundiais: ${meus.length} de ${MUNDIAIS.length}${cdR > 0 ? ' · recarregando: ' + mmssM(cdR) : ' · pronto para usar'}</p>` : ''}
+    <div class="forja">${MUNDIAIS.map((W, i) => { const c = custoMundial(i), feito = !!feitos[i], meu = meus.includes(i), naMao = S.mundial === i, ok = !feito && temMats(c) && qtd >= 3; return `<div class="anel ${ok ? 'pode' : ''}" style="--c:${W.cor}"><div class="ai"><svg viewBox="0 0 24 24"><path d="M12 2 21 8v8l-9 6-9-6V8z" fill="${W.cor}" stroke="#fff" stroke-width=".8"/><circle cx="12" cy="12" r="3" fill="#fff"/></svg></div><div class="ad"><b style="color:${W.cor}">${W.nome}</b> <span class="unica">Mundial · único</span>${meu ? ' <span class="unica" style="background:#2a6a3a">Seu</span>' : feito ? ' <span class="unica">Já forjado</span>' : ''}<p>${W.d}. Elemento: ${EL[W.el].nome}.</p>
       <div class="rec">${c.map(([id, q]) => { const t = S.mat[id] || 0; return `<span class="ri ${t >= q ? 'ok' : ''}" data-tip="mat:${id}">${iconeMat(MATS[id])}<em>${escH(MATS[id].nome)}</em><b>${fmt(Math.min(t, q))}/${q}</b></span>`; }).join('')}<span class="ri ${qtd >= 3 ? 'ok' : ''}"><em>Anéis para sacrificar</em><b>${qtd}/3+</b></span></div>
-      <div class="bts" style="justify-content:flex-start"><button data-mund="${i}" ${ok ? '' : 'disabled'}>Forjar e sacrificar anéis</button></div></div></div>`; }).join('')}</div>`;
-  $('#fx').onclick = fecharPainel; painel.querySelectorAll('[data-mund]').forEach((b) => (b.onclick = () => forjarMundial(+b.dataset.mund)));
+      <div class="bts" style="justify-content:flex-start">${meu ? (naMao ? '<button disabled>Na sua mão esquerda</button>' : `<button class="pri" data-seg="${i}">Segurar este</button>`) : `<button data-mund="${i}" ${ok ? '' : 'disabled'}>${feito ? 'Único: já foi forjado' : 'Forjar e sacrificar anéis'}</button>`}</div></div></div>`; }).join('')}</div>`;
+  $('#fx').onclick = fecharPainel; painel.querySelectorAll('[data-mund]').forEach((b) => (b.onclick = () => forjarMundial(+b.dataset.mund))); painel.querySelectorAll('[data-seg]').forEach((b) => (b.onclick = () => { segurarMundial(+b.dataset.seg); abrirForjaMundial(); }));
 }
 // ---------------- contas ----------------
 function abrirContas() {
@@ -4293,7 +4308,7 @@ function usarItem() {
   if (it && it.tipo === 'bau') { abrirBau(it, 1); J.cd = 0.3; return; }
   if (it && it.tipo === 'pocao') { beberPocao(it); J.cd = 0.4; return; }
   if (it && it.tipo === 'cajado') return lancarMagia();
-  if (bv('invis')) BUFF.invis.fim = 0;
+  if (bv('invis')) acabarBuff('invis');
   atacarEspada(!it || !CORPO.includes(it.tipo));
 }
 function atacarEspada(soco) {
@@ -4320,15 +4335,15 @@ function lancarMagia() {
 function ferirJogador(d, fonte, refletido) {
   if (!J.vivo || J.invul > 0 || criando || invulMundial()) return; d = D.n(d);
   if (fonte && fonte.paz && fonte.paz > agoraS()) return;
-  d = d.mul((1 - bv('reducao')) * (bv('aEgide') ? 0.4 : 1) * (1 - ZB.reducao) * (1 - (E.reducao || 0)) * (1 + (E.danoRec || 0)) * (fonte && fonte.furiaAte > agoraS() ? 1.5 : 1));
+  d = d.mul((1 - Math.min(0.8, bv('reducao'))) * (bv('aEgide') ? 0.4 : 1) * (1 - ZB.reducao) * (1 - (E.reducao || 0)) * (1 + (E.danoRec || 0)) * (fonte && fonte.furiaAte > agoraS() ? 1.5 : 1));
   if (fonte && fonte.fracoZ) d = d.mul(1 - fonte.fracoZ);
   if (fonte && atrAtivo(fonte, 'furia') && D.razao(fonte.hp, fonte.hpMax) < 0.4) d = d.mul(1.6);
   if (fonte && atrAtivo(fonte, 'vampiro') && mobs.includes(fonte)) { fonte.hp = D.min(fonte.hpMax, fonte.hp.add(fonte.hpMax.mul(fonte.arc ? 0.03 : 0.015))); particula(fonte.x, fonte.y + altMob(fonte) * 0.6, fonte.z, '#d0203a', 3, 3, 0.2, 0.5, 3); }
   J.hp = J.hp.sub(d); if (bv('hmEclipse') && J.hp.lt(1)) J.hp = D.n(1); registrarDanoRecebido(d); J.tDor = 0; J.voltando = 0; numero(J.x, J.y + 3.2, J.z, '-' + fmt(d.floor()), refletido ? 'ref' : 'dor'); som('dor'); $('#dor').style.opacity = 1;
-  if (bv('invis')) BUFF.invis.fim = 0;
+  if (bv('invis')) acabarBuff('invis');
   if (J.hp.lte(0)) {
     // ressurreição (anel) ou fênix (poção)
-    for (const k of ['aRessurreicao', 'fenix']) if (bv(k)) { delete BUFF[k]; J.hp = E.vidaMax; J.invul = 2.5; banner(k === 'fenix' ? 'Renascido das cinzas' : 'Ressurreição', 'Você voltou com a vida cheia'); fxPilar(J.x, J.z, 2, 20, '#ff9a3a', '#ffffff', 1); fxAnel(J.x, J.z, 1, 10, '#ffd84a', 0.6); buffMudou = true; return; }
+    for (const k of ['aRessurreicao', 'fenix']) if (bv(k)) { consumirBuff(k); J.hp = E.vidaMax; J.invul = 2.5; banner(k === 'fenix' ? 'Renascido das cinzas' : 'Ressurreição', 'Você voltou com a vida cheia'); fxPilar(J.x, J.z, 2, 20, '#ff9a3a', '#ffffff', 1); fxAnel(J.x, J.z, 1, 10, '#ffd84a', 0.6); buffMudou = true; return; }
     J.vivo = false; J.hp = D.Z; J.mov = null; contarMorte(); $('#morte').hidden = false; particula(J.x, J.y + 1.5, J.z, OPC.camisa[S.look.camisa], 14, 8, 0.3, 1.2, 6); J.modelo.raiz.vis = false;
     setTimeout(() => { J.x = 0; J.z = 6; J.y = 3; J.vy = 0; J.hp = E.vidaMax; J.vivo = true; J.invul = 2; J.modelo.raiz.vis = true; $('#morte').hidden = true; }, 2600);
   }
@@ -4347,15 +4362,13 @@ function guardarPocao(pid, n) {
 function beberPocao(it) {
   const p = POCOES[it.pid]; if (!p || !J.vivo) return;
   const M = 300;
-  switch (p.f) {
-    case 'curar': J.hp = D.min(E.vidaMax, J.hp.add(E.vidaMax.mul(p.v))); break;
-    case 'atr': buff('atr', p.v, M); break; case 'limite': buff('limite', p.v, M); break; case 'drop': buff('drop', p.v, M); break;
-    case 'vel': buff('vel', p.v, M); break; case 'pulo': buff('pulo', p.v, M); break; case 'crit': buff('crit', p.v, M); break; case 'pontos': buff('pontos', p.v, M); break;
-    case 'regen': buff('regen', p.v, 120); break; case 'reducao': buff('reducao', p.v, 180); break; case 'recarga': buff('recarga', p.v, 180); break; case 'imune': buff('imune', 1, p.v * 120); break;
-    case 'roubo': buff('roubo', p.v, 180); break; case 'furia': buff('furia', p.v, 180); break; case 'sorte': buff('sorte', p.v, M); break; case 'invis': buff('invis', 1, 60); break; case 'fenix': buff('fenix', 1, 600); break;
-  }
+  // cada poção tem o seu tempo: beber a mesma de novo SOMA o tempo; níveis diferentes do mesmo efeito valem juntos
+  const DUR = { regen: 120, reducao: 180, recarga: 180, roubo: 180, furia: 180, invis: 60, fenix: 600 }, V = { imune: 1, invis: 1, fenix: 1 };
+  let resta = 0;
+  if (p.f === 'curar') J.hp = D.min(E.vidaMax, J.hp.add(E.vidaMax.mul(p.v)));
+  else { const dur = p.f === 'imune' ? p.v * 120 : DUR[p.f] || M; resta = buffPocao(p.f, p.tier, V[p.f] !== undefined ? V[p.f] : p.v, dur, p.nome, p.cor); }
   it.qtd--; if (it.qtd <= 0) { const i = S.barra.indexOf(it); if (i >= 0) S.barra[i] = null; const k = S.inv.indexOf(it); if (k >= 0) S.inv.splice(k, 1); }
-  est().pocoes++; som('bebe'); particula(J.x, J.y + 2, J.z, p.cor, 8, 3, 0.2, 0.7, 5); fxAnel(J.x, J.z, 0.5, 3, p.cor, 0.4, 0.5); toast(p.nome + ': ' + p.desc, p.cor); sujo = true; desenharBarra();
+  est().pocoes++; som('bebe'); particula(J.x, J.y + 2, J.z, p.cor, 8, 3, 0.2, 0.7, 5); fxAnel(J.x, J.z, 0.5, 3, p.cor, 0.4, 0.5); toast(p.nome + ': ' + p.desc + (resta > 0 ? ' · tempo total ' + (resta >= 3600 ? Math.floor(resta / 3600) + ' h ' : '') + Math.floor((resta % 3600) / 60) + ' min' : ''), p.cor); sujo = true; desenharBarra();
 }
 function usarAnel(dedo) {
   const k = S.roda[dedo]; if (k === null || k === undefined) { aviso('Esse dedo está sem anel. Forje um no inventário.', 2); return false; }
