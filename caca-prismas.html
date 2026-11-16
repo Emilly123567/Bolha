@@ -443,6 +443,38 @@ body.toque:not(.controle) #habHud { display: none; }
 
 #clima .proxEv { font: 700 11px var(--f-texto); color: var(--tinta-2); white-space: nowrap; }
 #clima.quieto { opacity: 0.75; padding-top: 4px; padding-bottom: 4px; }
+/* ---- títulos celestiais: faíscas, pulsação e aura de luz ---- */
+.tt.tg.t4b, .tt.tg.t4, .tt.tg.t5, .tt.tg.t6 { position: relative; display: inline-block; }
+.tt.tg.t4b { font-size: 13px; letter-spacing: 0.1em; animation: brilho 1.6s linear infinite, pulsoT 2.2s ease-in-out infinite; }
+.tt.tg.t4 { font-size: 14px; letter-spacing: 0.11em; animation: brilho 1.3s linear infinite, pulsoT 1.8s ease-in-out infinite; }
+.tt.tg.t5 { font-size: 15px; letter-spacing: 0.12em; animation: brilho 1.1s linear infinite, pulsoT 1.4s ease-in-out infinite, respiraT 2.4s ease-in-out infinite; }
+.tt.tg.t6 { font-size: 16px; letter-spacing: 0.14em; animation: brilho 0.9s linear infinite, pulsoT6 1.2s ease-in-out infinite, respiraT 2s ease-in-out infinite; }
+.tt.tg.t4b::after, .tt.tg.t4::after, .tt.tg.t5::after, .tt.tg.t6::after, .tt.tg.t5::before, .tt.tg.t6::before { content: '✦'; position: absolute; -webkit-text-fill-color: #fff; color: #fff; background: none; font-size: 10px; text-shadow: 0 0 6px var(--c1), 0 0 12px var(--c1); animation: faiscaT 1.6s ease-in-out infinite; pointer-events: none; }
+.tt.tg.t4b::after, .tt.tg.t4::after, .tt.tg.t5::after, .tt.tg.t6::after { right: -10px; top: -8px; }
+.tt.tg.t5::before, .tt.tg.t6::before { left: -10px; bottom: -6px; animation-delay: 0.8s; }
+.tt.tg.t6::before, .tt.tg.t6::after { content: '❖'; font-size: 12px; }
+@keyframes faiscaT { 0%, 100% { opacity: 0; transform: scale(0.3) rotate(0deg); } 50% { opacity: 1; transform: scale(1.15) rotate(120deg); } }
+@keyframes respiraT { 50% { transform: scale(1.07); } }
+@keyframes pulsoT6 { 0%, 100% { filter: drop-shadow(0 0 8px var(--c1)) drop-shadow(0 0 2px #fff) drop-shadow(0 1px 1px #000); } 50% { filter: drop-shadow(0 0 18px var(--c1)) drop-shadow(0 0 6px #fff) drop-shadow(0 0 28px var(--c1)) drop-shadow(0 1px 1px #000); } }
+@media (prefers-reduced-motion: reduce) { .tt.tg, .tt.tg::before, .tt.tg::after { animation: none !important; } }
+/* ---- mundo celestial, feiticeiro ---- */
+#flashCeu { position: fixed; inset: 0; background: radial-gradient(circle, #ffffff 0%, #dff4ff 60%, #bfe8ff 100%); opacity: 0; pointer-events: none; z-index: 50; transition: opacity 0.1s; }
+.feit { display: grid; grid-template-columns: minmax(0, 200px) minmax(0, 1fr); gap: 14px; align-items: start; }
+.feitLista { display: grid; grid-template-columns: repeat(auto-fill, minmax(46px, 1fr)); gap: 6px; max-height: 420px; overflow: auto; }
+.feitItem small { color: var(--tinta-2); }
+.efs { display: grid; gap: 6px; }
+.efL { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 10px; background: rgba(255, 255, 255, 0.05); }
+.efL > span, .efL > small { display: block; }
+.efN { display: block; font-weight: 800; } .efL small, .oferta small { display: block; color: var(--tinta-2); font-size: 12px; }
+.efL .sw { flex: none; }
+.ofertas { display: grid; gap: 6px; }
+.oferta { text-align: left; padding: 10px 12px; border-radius: 10px; background: rgba(192, 96, 255, 0.1); border: 1px solid rgba(192, 96, 255, 0.4); color: inherit; display: grid; gap: 4px; }
+.oferta:hover, .oferta:focus-visible { background: rgba(192, 96, 255, 0.22); }
+.oferta.manter { background: rgba(255, 255, 255, 0.05); border-color: rgba(255, 255, 255, 0.15); font-weight: 800; }
+.ceuGrade { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 6px; max-height: 60vh; overflow: auto; }
+.ceuIlha { display: flex; gap: 8px; align-items: center; text-align: left; padding: 7px 9px; border-radius: 10px; border: 1px solid color-mix(in srgb, var(--c) 60%, transparent); background: color-mix(in srgb, var(--c) 14%, rgba(8, 10, 20, 0.6)); color: inherit; font-size: 12px; }
+.ceuIlha b { font: 400 15px var(--f-titulo); color: var(--c); } .ceuIlha.venc { box-shadow: inset 0 0 0 2px #7dffa8; } .ceuIlha:disabled { opacity: 0.35; }
+@media (max-width: 640px) { .feit { grid-template-columns: 1fr; } .feitLista { max-height: 120px; } .efL { flex-direction: column; align-items: flex-start; } }
 /* ---- atualização Bolha ---- */
 .sw button.pri, .bts button.pri, .conta button.pri { width: auto; margin-top: 0; padding: 9px 16px; font: 400 14px var(--f-titulo); color: #2a1c00; background: linear-gradient(180deg, #ffe680, #ffc23a); box-shadow: 0 3px 0 #b37a00; border: 0; }
 .sw button.pri:disabled, .bts button.pri:disabled { color: #8a8070; background: rgba(255, 255, 255, 0.08); box-shadow: none; font: 700 13px var(--f-texto); }
@@ -583,11 +615,15 @@ D.Z = new D(0, 0);
 const SUF0 = ['', 'K', 'M', 'B', 'T', 'Qa', 'Qi', 'Sx', 'Sp', 'Oc', 'No'];
 const SU = ['', 'U', 'D', 'T', 'Qa', 'Qi', 'Sx', 'Sp', 'Oc', 'No'], ST_ = ['', 'Dc', 'Vg', 'Tg', 'Qd', 'Qq', 'Sg', 'St', 'Og', 'Ng'], SC = ['', 'Ce', 'Dn', 'Tc', 'Qe', 'Qu', 'Sc', 'Si', 'Oe', 'Ne'];
 function sufixo(n) { if (n < SUF0.length) return SUF0[n]; const i = n - 1; return SU[i % 10] + ST_[Math.floor(i / 10) % 10] + SC[Math.floor(i / 100) % 10]; }
+// acima de 10^3003: milhares de -ilhões (Mi) e o resto depois do hífen. Ex.: 72.4OcDeCeMi-NaDceOctgNo
+const U1 = ['', 'U', 'D', 'T', 'Qa', 'Qi', 'Sx', 'Sp', 'Oc', 'No'], T1 = ['', 'De', 'Vg', 'Tg', 'Qag', 'Qig', 'Sxg', 'Spg', 'Octg', 'Nog'], H1 = ['', 'Ce', 'Dce', 'Tce', 'Qace', 'Qice', 'Sxce', 'Spce', 'Octce', 'Noce'];
+function sufixoMi(n) { const i = n - 1, A = Math.floor(i / 1000), B = i % 1000; const uth = (v) => U1[v % 10] + T1[Math.floor(v / 10) % 10] + H1[Math.floor(v / 100) % 10], htu = (v) => H1[Math.floor(v / 100) % 10] + T1[Math.floor(v / 10) % 10] + U1[v % 10]; return uth(A) + 'Mi' + (B ? '-Na' + htu(B) : ''); }
 function fmt(x) {
   x = D.n(x); const neg = x.m < 0; let s;
   if (!x.m) return '0';
   if (x.e < 6) { s = Math.floor(Math.abs(x.toNumber())).toLocaleString('pt-BR'); }
   else if (x.e < 3003) { const n = Math.floor(x.e / 3), mm = Math.abs(x.m) * Math.pow(10, x.e - n * 3); s = (mm < 10 ? mm.toFixed(2) : mm < 100 ? mm.toFixed(1) : mm.toFixed(0)) + sufixo(n); }
+  else if (x.e < 3e6) { const n = Math.floor(x.e / 3), mm = Math.abs(x.m) * Math.pow(10, x.e - n * 3); s = (mm < 10 ? mm.toFixed(2) : mm < 100 ? mm.toFixed(1) : mm.toFixed(0)) + sufixoMi(n); }
   else if (x.e < 1e9) s = Math.abs(x.m).toFixed(2) + 'e' + x.e;
   else s = 'e' + fmt(D.n(x.e));
   return (neg ? '-' : '') + s;
@@ -917,6 +953,27 @@ const N_AREAS = 60, PASSO = 330, R_REINO = 125;
 const BIOMAS = BIO_D.map((b, i) => { const nv = i < N_AREAS ? i : N_AREAS - 1 + 5 * (i - N_AREAS + 1); return { i, nv, anel: Math.min(14, Math.floor(nv / 4)), reino: i >= N_AREAS, nome: b[0], topC: hex(b[1]), ladoC: hex(b[2]), ceuAC: hex(b[3]), ceuBC: hex(b[4]), nevC: hex(b[5]), solC: hex(b[6]), amp: b[7], base: b[8], deg: b[9], liq: b[10], tema: b[11], mat: b[12], esp: b[13].map((k) => EK[k]), chefeNome: b[14], crista: b[15] || 0, cor: b[1], mont: i >= N_AREAS ? 0 : b[10] === 'agua' ? 0.45 : b[10] === 'lava' ? 0.8 : 1 }; });
 // 20 espécies novas vivem como 3ª espécie nas regiões 30 a 49
 ['salamandraFogo', 'naja', 'touroBronze', 'aguiaOuro', 'cervoFantasma', 'olhoVazio', 'serpe', 'vermeRubro', 'einherjar', 'anjoVitral', 'loboTrovao', 'elemFogo', 'colossoQuartzo', 'mariposa', 'carnical', 'lulaAbissal', 'harpia', 'yeti', 'sentinelaRunica', 'esfinge'].forEach((k, n) => BIOMAS[30 + n].esp.push(EK[k]));
+// ---------------- MUNDO CELESTIAL: 90 ilhas (400 × 500 m) no céu, ligadas por pontes de luz ----------------
+const N_CEU = 90, CEU_B0 = BIOMAS.length;
+const hslHex = (h, s, l) => { s /= 100; l /= 100; const k = (n) => (n + h / 30) % 12, a = s * Math.min(l, 1 - l), f = (n) => l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1))); return '#' + [f(0), f(8), f(4)].map((v) => Math.round(v * 255).toString(16).padStart(2, '0')).join(''); };
+const clarear = (c, t) => { const a = hex(c), m = mixC(a, [1, 0.96, 0.85], t); return '#' + m.map((v) => Math.round(clamp(v, 0, 1) * 255).toString(16).padStart(2, '0')).join(''); };
+// espécies celestiais: versões claras e douradas das espécies do mundo (os materiais são os da espécie original)
+const ESP_CEU = {};
+function especieCeu(idx) { if (ESP_CEU[idx] !== undefined) return ESP_CEU[idx]; const b = ESP[idx], n = Object.assign({}, b, { nome: b.nome + ' Celestial', cor: clarear(b.cor, 0.45), cor2: '#ffe08a', x: Object.assign({}, b.x), celeste: 1 }); ESP.push(n); ESP_CEU[idx] = ESP.length - 1; return ESP_CEU[idx]; }
+{
+  const PRE = ['Jardins', 'Campos', 'Picos', 'Templos', 'Cascatas', 'Bosques', 'Ruínas', 'Lagos', 'Vales', 'Torres'], SUF = ['da Aurora', 'de Cristal Vivo', 'do Trovão Sagrado', 'das Mil Asas', 'do Sol Azul', 'da Harpa Eterna', 'do Véu Dourado', 'dos Serafins', 'do Trono Celeste'];
+  const TIT = ['Serafim', 'Querubim', 'Trono', 'Dominação', 'Potestade', 'Virtude', 'Principado', 'Guardião Alado', 'Juiz Celeste', 'Coro Eterno'], EPI = ['da Aurora', 'do Cristal', 'do Trovão', 'das Asas', 'do Sol Azul', 'da Harpa', 'do Véu', 'da Chama Branca', 'do Trono'];
+  const MATN = ['Pluma', 'Orvalho', 'Centelha', 'Pena', 'Brisa', 'Nota', 'Seda', 'Brasa Branca', 'Coroa'];
+  const TEMAS = ['nuvens', 'cidadela', 'astral', 'celeste', 'prisma', 'cristal', 'bolhas', 'biolum', 'vidro', 'ouro', 'estelar', 'infinito', 'solar', 'espectral', 'valquiria', 'raios', 'relogio', 'eclipse'];
+  const base = ESP.length;
+  for (let a = 0; a < N_CEU; a++) {
+    const h = (a * 37 + 190) % 360, row = Math.floor(a / 10);
+    const e1 = especieCeu((a * 13 + 7) % base), e2 = especieCeu((a * 29 + 50) % base === (a * 13 + 7) % base ? (a * 29 + 51) % base : (a * 29 + 50) % base);
+    BIOMAS.push({ i: CEU_B0 + a, a, nv: 95 + a, anel: 14, ceu: true, nome: PRE[a % 10] + ' ' + SUF[row], topC: hex(hslHex(h, 48, 80)), ladoC: hex(hslHex(h, 28, 62)), ceuAC: hex(hslHex((205 + a * 2) % 360, 75, 60)), ceuBC: hex(hslHex(h, 70, 92)), nevC: hex(hslHex(h, 55, 90)), solC: hex('#bfe8ff'),
+      amp: 4 + (a % 5) * 1.6, base: 8, deg: 1 + (a % 3 === 2 ? 1 : 0), liq: null, tema: TEMAS[(a * 7) % TEMAS.length], mat: MATN[row] + ' ' + (['Alva', 'Azul', 'Dourada', 'Rosada', 'Violeta', 'Prateada', 'Estelar', 'Solar', 'Lunar', 'Eterna'][a % 10]),
+      esp: [e1, e2], chefeNome: TIT[a % 10] + ' ' + EPI[row], crista: 0, cor: hslHex(h, 70, 72), mont: 0 });
+  }
+}
 // ---------------- regiões: células de um favo (praça no centro + 4 voltas de 6, 12, 18 e 24) ----------------
 // cada região é separada das vizinhas por uma cordilheira, com um portão em cada fronteira
 const GRANDES = { 12: 1, 17: 3, 27: 2, 36: 3, 55: 1 }; // regiões grandes: número de chefes
@@ -933,9 +990,32 @@ const CENT = (() => {
 })();
 const REINOS = Array.from({ length: 7 }, (_, j) => ({ j, x: 7000 + j * 700, z: 7000, bi: N_AREAS + j }));
 const LOBBY = { nome: 'Praça do Prisma', topC: hex('#d9d2c2'), ladoC: hex('#aaa08d'), ceuAC: hex('#5ea8f5'), ceuBC: hex('#dcefff'), nevC: hex('#d6ebff'), solC: hex('#fff1d6'), amp: 1, base: 2, deg: 1, crista: 0, liq: null, tema: 'praca', mont: 0, cor: '#d9d2c2', nv: 0 };
-const bioOu = (i) => (i < 0 ? LOBBY : BIOMAS[i]);
+// layout do mundo celestial: cobra de 10 colunas × 9 linhas; a Praça Celestial fica antes da ilha 1
+const CEUL = { x0: 20000, z0: 0, PX: 480, PZ: 580, W2: 200, L2: 250, hx: 19660, hz: 0 };
+const centroCeu = (a) => { const row = Math.floor(a / 10), k = a % 10, col = row % 2 ? 9 - k : k; return { x: CEUL.x0 + col * CEUL.PX, z: CEUL.z0 + row * CEUL.PZ, row, col }; };
+const PONTES_CEU = (() => { const l = [{ a: -1, b: 0, x0: CEUL.hx + 80, z0: 0, x1: CEUL.x0 - CEUL.W2 + 6, z1: 0 }];
+  for (let a = 0; a < N_CEU - 1; a++) { const p = centroCeu(a), q = centroCeu(a + 1); if (p.row === q.row) { const s = Math.sign(q.x - p.x); l.push({ a, b: a + 1, x0: p.x + s * (CEUL.W2 - 6), z0: p.z, x1: q.x - s * (CEUL.W2 - 6), z1: q.z }); } else l.push({ a, b: a + 1, x0: p.x, z0: p.z + CEUL.L2 - 6, x1: q.x, z1: q.z - CEUL.L2 + 6 }); }
+  return l; })();
+const distSeg = (x, z, p) => { const dx = p.x1 - p.x0, dz = p.z1 - p.z0, L2 = dx * dx + dz * dz, t = clamp(((x - p.x0) * dx + (z - p.z0) * dz) / L2, 0, 1); return Math.hypot(x - (p.x0 + dx * t), z - (p.z0 + dz * t)); };
+const PRACA_CEU = { nome: 'Praça Celestial', topC: hex('#f4f0ff'), ladoC: hex('#c8c0e0'), ceuAC: hex('#5a9aff'), ceuBC: hex('#e8f4ff'), nevC: hex('#e0ecff'), solC: hex('#bfe8ff'), amp: 0, base: 8, deg: 1, crista: 0, liq: null, tema: 'praca', mont: 0, cor: '#e8e0ff', nv: 95, ceu: true };
+function coordCeu(wx, wz) {
+  const C = { j: -9, ceu: 1, px: wx, pz: wz };
+  const dh = Math.hypot(wx - CEUL.hx, wz - CEUL.hz), nh = (vnoise(wx * 0.05, wz * 0.05, 77) - 0.5) * 10;
+  if (dh < 92 + nh) { C.i = -4; C.bd = 92 + nh - dh; return C; }
+  const col = Math.round((wx - CEUL.x0) / CEUL.PX), row = Math.round((wz - CEUL.z0) / CEUL.PZ);
+  if (col >= 0 && col < 10 && row >= 0 && row < 9) {
+    const lx = Math.abs(wx - (CEUL.x0 + col * CEUL.PX)), lz = Math.abs(wz - (CEUL.z0 + row * CEUL.PZ)), R = 45, qx = lx - (CEUL.W2 - R), qz = lz - (CEUL.L2 - R);
+    const bd = -(Math.hypot(Math.max(qx, 0), Math.max(qz, 0)) + Math.min(Math.max(qx, qz), 0) - R) + (vnoise(wx * 0.04, wz * 0.04, 78) - 0.5) * 14;
+    if (bd > 0) { C.a = row * 10 + (row % 2 ? 9 - col : col); C.i = CEU_B0 + C.a; C.bd = bd; return C; }
+  }
+  for (const p of PONTES_CEU) { if (Math.abs(wx - (p.x0 + p.x1) / 2) > Math.abs(p.x1 - p.x0) / 2 + 8 || Math.abs(wz - (p.z0 + p.z1) / 2) > Math.abs(p.z1 - p.z0) / 2 + 8) continue; const d = distSeg(wx, wz, p); if (d < 6) { C.i = p.a < 0 ? -4 : CEU_B0 + p.a; C.ponte = p; C.bd = 6 - d; return C; } }
+  C.i = -4; C.vazio = 1; C.bd = -99; return C;
+}
+const ceuLiberado = (a) => a <= 0 || !!(S.ceuVencidos && S.ceuVencidos[a - 1]);
+const bioOu = (i) => (i === -4 ? PRACA_CEU : i < 0 ? LOBBY : BIOMAS[i]);
 // coordenadas "ruidosas" (as fronteiras ficam orgânicas); devolve a célula, a vizinha mais próxima e a distância até a fronteira
 function coord(wx, wz) {
+  if (wx > 15000) return [coordCeu(wx, wz), 0];
   if (wx > 5000) { let jb = 0, db = 1e9; for (const R_ of REINOS) { const d = Math.hypot(wx - R_.x, wz - R_.z); if (d < db) { db = d; jb = R_.j; } } return [{ i: N_AREAS + jb, j: -9, bd: R_REINO - db, dr: db, reino: jb, px: wx, pz: wz }, 0]; }
   const px = wx + (fbm(wx * 0.0045, wz * 0.0045, 7, 2) - 0.5) * 110, pz = wz + (fbm(wx * 0.0045 + 31, wz * 0.0045 - 17, 21, 2) - 0.5) * 110;
   let b1 = 1e18, b2 = 1e18, i1 = 0, i2 = 0;
@@ -981,7 +1061,8 @@ const CHEFES = (() => {
   }
   const ESP_DEF = ['aguaViva', 'golemRunico', 'arauto', 'fenix', 'serpenteCeleste', 'quimera', 'bolhaErrante'];
   for (const R_ of REINOS) { const B = BIOMAS[R_.bi]; l.push({ k: 65 + R_.j, ord: 65 + R_.j, j: R_.j, bi: R_.bi, nome: B.chefeNome, esp: ESP[EK[ESP_DEF[R_.j]]], x: R_.x, zz: R_.z + 20, cor: B.cor, mob: null, tipo: 'def' }); }
-  for (const c of l) { c.num = c.ord + 1; c.nv = c.tipo === 'def' ? 26 + c.j : Math.round((c.ord * 24) / 64); c.id = 'k' + c.k; }
+  for (let a = 0; a < N_CEU; a++) { const B = BIOMAS[CEU_B0 + a], c = centroCeu(a); l.push({ k: 72 + a, ord: 72 + a, a, bi: B.i, nome: B.chefeNome, esp: ESP[B.esp[a % 2]], x: c.x, zz: c.z + 150, cor: B.cor, mob: null, tipo: 'ceu' }); }
+  for (const c of l) { c.num = c.ord + 1; c.nv = c.tipo === 'def' ? 26 + c.j : c.tipo === 'ceu' ? 26 + Math.min(10, Math.floor(c.a / 9)) : Math.round((c.ord * 24) / 64); if (c.tipo === 'ceu') c.num = c.a + 1; c.id = 'k' + c.k; }
   return l.sort((a, b) => a.k - b.k);
 })();
 const CHEFES_ORD = CHEFES.slice().sort((a, b) => a.ord - b.ord);
@@ -1005,6 +1086,12 @@ const SANTUARIO = { x: -78, z: 0 };
 const ESTR = [], ESTR_GRADE = new Map(), chaveGrade = (x, z) => Math.floor(x / 64) * 100000 + Math.floor(z / 64);
 function alturaCrua(wx, wz, semArena) {
   const C = coord(wx, wz)[0], raio = Math.hypot(wx, wz);
+  if (C.ceu) { // mundo celestial: ilhas e pontes flutuando sobre o vazio
+    if (C.vazio) return -60; if (C.ponte || C.i === -4) return 8;
+    const B = BIOMAS[C.i]; let h = 8 + (fbm(wx * 0.017, wz * 0.017, 1, 4) - 0.45) * B.amp * 2 * sstep(4, 34, C.bd) + Math.max(0, fbm(wx * 0.006, wz * 0.006, 33, 2) - 0.55) * 60 * sstep(40, 90, C.bd);
+    if (!semArena) for (const c of CHEFES) { if (c.tipo !== 'ceu') continue; const dx = wx - c.x, dz = wz - c.zz; if (dx * dx + dz * dz < 676) h = lerp(c.h, h, sstep(14, 24, Math.sqrt(dx * dx + dz * dz))); }
+    return Math.max(4, h);
+  }
   if (C.j === -9) { // reino secreto: plataforma flutuando no vazio
     if (C.dr > R_REINO + 4) return -60;
     let h = 4 + (fbm(wx * 0.03, wz * 0.03, 3, 3) - 0.5) * 3 * (C.dr > 40 ? 1 : 0); if (C.dr > R_REINO - 6) h = lerp(h, -60, sstep(R_REINO - 6, R_REINO + 4, C.dr));
@@ -1038,7 +1125,7 @@ function biomaTile(tx, tz) { const k = (tx + 40000) * 80000 + (tz + 40000); let 
 function H(tx, tz) {
   const k = (tx + 40000) * 80000 + (tz + 40000); let h = cacheH.get(k); if (h !== undefined) return h;
   const wx = (tx + 0.5) * T, wz = (tz + 0.5) * T, bi = biomaTile(tx, tz), B = bioOu(bi);
-  h = alturaCrua(wx, wz); if (B.reino && h < -10) { if (cacheH.size > 300000) cacheH.clear(); cacheH.set(k, -60); return -60; } if (!B.liq || B.liq === 'gelo') h = Math.max(1, h);
+  h = alturaCrua(wx, wz); if ((B.reino || B.ceu) && h < -10) { if (cacheH.size > 300000) cacheH.clear(); cacheH.set(k, -60); return -60; } if (!B.liq || B.liq === 'gelo') h = Math.max(1, h);
   h = Math.round(h / B.deg) * B.deg; if (Math.hypot(wx, wz) < 33) h = 2;
   if (h < -3) h = -3;
   if (cacheH.size > 300000) cacheH.clear(); cacheH.set(k, h); return h;
@@ -1068,6 +1155,9 @@ for (const p of LISTA_PORT) {
   });
   fixo(p.x, p.z, (g, cx, cz, h) => { const pedra = hex('#d8d0be'); for (let k = -4; k <= 4; k++) { const x = cx + nx * k * 1.8, z = cz + nz * k * 1.8, y = h + 10.4 + (16 - k * k) * 0.12; g.caixa(x - 1, y, z - 1, x + 1, y + 0.8, z + 1, k % 2 ? pedra : hex('#e8b83a')); } for (let k = -2; k <= 2; k++) g.caixa(cx + dx * k * 2 - 1.6, h + 0.02, cz + dz * k * 2 - 1.6, cx + dx * k * 2 + 1.6, h + 0.12, cz + dz * k * 2 + 1.6, hex('#cfc6b4')); });
 }
+// mundo celestial: postes de luz nas pontes e colunas na Praça Celestial
+for (const p of PONTES_CEU) { const L = Math.hypot(p.x1 - p.x0, p.z1 - p.z0), nx = -(p.z1 - p.z0) / L, nz = (p.x1 - p.x0) / L; for (let d = 6; d < L - 4; d += 22) for (const l of [-1, 1]) { const x = p.x0 + ((p.x1 - p.x0) * d) / L + nx * 5.2 * l, z = p.z0 + ((p.z1 - p.z0) * d) / L + nz * 5.2 * l; fixo(x, z, (g, cx, cz, h) => { g.caixa(cx - 0.25, h, cz - 0.25, cx + 0.25, h + 3.2, cz + 0.25, hex('#fff6d8'), hex('#d8c08a')); g.octa(cx, h + 3.7, cz, 0.35, 0.5, hex('#bfe8ff')); }); } }
+for (let i = 0; i < 12; i++) { const a = (i / 12) * TAU, x = CEUL.hx + Math.cos(a) * 74, z = CEUL.hz + Math.sin(a) * 74; if (Math.abs(Math.sin(a)) < 0.2 && Math.cos(a) > 0) continue; fixo(x, z, (g, cx, cz, h) => { g.caixa(cx - 1, h, cz - 1, cx + 1, h + 11, cz + 1, hex('#f8f4ff'), hex('#d0c8e8')); g.caixa(cx - 1.4, h + 11, cz - 1.4, cx + 1.4, h + 11.6, cz + 1.4, hex('#ffd84a')); g.octa(cx, h + 13.4, cz, 0.7, 1.1, hex('#bfe8ff')); }); }
 // reinos secretos: anel de colunas flutuantes em volta da plataforma
 for (const R_ of REINOS) { const B = BIOMAS[R_.bi]; for (let i = 0; i < 14; i++) { const a = (i / 14) * TAU, x = R_.x + Math.cos(a) * (R_REINO - 14), z = R_.z + Math.sin(a) * (R_REINO - 14); fixo(x, z, (g, cx, cz, h) => { g.caixa(cx - 1, h, cz - 1, cx + 1, h + 12, cz + 1, B.ladoC, mulC(B.ladoC, 0.85)); g.caixa(cx - 1.4, h + 12, cz - 1.4, cx + 1.4, h + 12.6, cz + 1.4, hex('#ffd84a')); g.octa(cx, h + 14.5, cz, 0.8, 1.2, B.topC); }); } }
 for (const c of ALTARES) fixo(c.x, c.zz, (g, cx, cz, h) => {
@@ -1175,6 +1265,7 @@ function construirPedaco(cx, cz) {
     const [d, a] = coord(wx, wz), bi = biomaTile(tx, tz), B = bioOu(bi);
     if (h < -20) continue;
     let top = mistura(d, a, 'topC'), lado = mistura(d, a, 'ladoC');
+    if (d.ceu) { if (d.ponte) { top = mixC(hex('#fff2c0'), hex('#ffffff'), hash2(tx, tz, 5) * 0.3); lado = hex('#c8a860'); } else if (d.i === -4) { top = mixC(hex('#f4f0ff'), hex('#e8d8ff'), ((tx + tz) & 1) * 0.4); lado = hex('#b8b0d0'); } else if (d.bd < 3) top = mulC(top, 1.08); }
     const mk = muroK(d); if (mk > 0.15) { const pedra = mixC(hex('#6e6a72'), B.ladoC, 0.25); top = mixC(top, mulC(pedra, 1.1 + hash2(tx, tz, 9) * 0.12), sstep(0.15, 0.6, mk)); lado = mixC(lado, pedra, sstep(0.15, 0.5, mk)); }
     else if (d.j !== -9 && d.bd < 4) top = mulC(top, 0.82);
     top = mulC(top, 0.93 + hash2(tx, tz, 5) * 0.12);
@@ -1199,13 +1290,14 @@ function construirPedaco(cx, cz) {
     }
     if (lq) { const L = LIQ[lq], y = L.y; gl_[lq].quad([x0, y, z0], [x0, y, z1], [x1, y, z1], [x1, y, z0], mulC(hex(L.cor), 0.92 + hash2(tx, tz, 8) * 0.14)); }
     const fx = FIXOS.get(tx + ',' + tz); if (fx) for (const fn of fx) fn(g, wx, wz, h);
-    else if (!lq && !congelado && raio > 34 && bi >= 0 && mk < 0.2 && !emEstrutura(wx, wz) && (h < 46 || hash2(tx, tz, 3) < 0.3)) decorar(g, B.tema, tx, tz, h, wx, wz);
+    else if (!lq && !congelado && raio > 34 && bi >= 0 && mk < 0.2 && !d.ponte && !emEstrutura(wx, wz) && (h < 46 || hash2(tx, tz, 3) < 0.3)) decorar(g, B.tema, tx, tz, h, wx, wz);
   }
   // onde os monstros nascem (2 por pedaço)
   const spawns = [];
   for (let k = 0; k < 3; k++) {
     const i = Math.floor(hash2(cx, cz, 300 + k) * CH), j = Math.floor(hash2(cx, cz, 400 + k) * CH), wx = (tx0 + i + 0.5) * T, wz = (tz0 + j + 0.5) * T;
     if (Math.hypot(wx, wz) < 50 || hAt(i, j) <= 0) continue;
+    { const Cs = coord(wx, wz)[0]; if (Cs.ponte || (Cs.ceu && Cs.i < 0)) continue; }
     if (muroK(coord(wx, wz)[0]) > 0.1 || ILHAS.some((c) => Math.hypot(wx - c.x, wz - c.z) < 22) || Math.hypot(wx - SANTUARIO.x, wz - SANTUARIO.z) < 30) continue;
     if (CHEFES.some((c) => Math.hypot(wx - c.x, wz - c.zz) < 28) || ALTARES.some((c) => Math.hypot(wx - c.x, wz - c.zz) < 36) || SOL.has(chaveT(tx0 + i, tz0 + j)) || ['castelo', 'avalan', 'vila', 'templo'].includes((emEstrutura(wx, wz) || {}).tipo)) continue;
     const bi = biomaTile(tx0 + i, tz0 + j); if (bi < 0) continue;
@@ -1395,13 +1487,25 @@ const NV = (b) => (b >= 0 && BIOMAS[b] ? BIOMAS[b].nv : Math.max(0, b)); // nív
 const escBio = (b) => D.n(BAL.R).pow(NV(b));
 const ganhoBioma = (b) => D.n(4.5).mul(escBio(b));                 // pontos médios por monstro na região
 const ptsMaxMob = (b) => escBio(b).mul(6 * 3);                      // o monstro mais forte da região (elite com o sorteio máximo)
-const ptsChefe = (b) => ptsMaxMob(b).mul(70);                        // chefe: 70x o monstro mais forte da mesma região
+const ptsChefe = (b) => (BIOMAS[b] && BIOMAS[b].ceu ? ptsMaxMob(b).div(8).mul(250) : ptsMaxMob(b).mul(70)); // chefe: 70x o monstro mais forte (no céu: 250x)
 const hpChefe = (ord) => D.n(156000).mul(D.n(BAL.Q).pow(ord));
 // chefes definitivos: muito acima do chefe 65, crescendo a cada reino
-const hpDoChefe = (c) => (c.tipo === 'def' ? ganhoBioma(c.bi).mul(5000 * (1 + c.j)) : hpChefe(c.ord));
+const hpDoChefe = (c) => (c.tipo === 'ceu' ? hpForteCeu(c.a).mul(7).mul(escCeu(c.a)).floor() : c.tipo === 'def' ? ganhoBioma(c.bi).mul(5000 * (1 + c.j)) : hpChefe(c.ord));
 const poderMaxItem = (b) => D.n(37400).mul(D.n(BAL.I).pow(NV(b)));
 const danoBioma = (b) => escBio(b).mul(1 + NV(b) / 5);
 const HP_ARC_FINAL = hpChefe(N_CHEFES - 1).mul(436);                 // forma final dos arcanjos (mesma proporção de antes: 436x o último chefe)
+// ---------------- mundo celestial ----------------
+// monstros: 3x a vida normal e 8x menos pontos · chefes: 7x a vida do monstro mais forte, 5x o dano, 250x os pontos
+// o último chefe (ilha 90) tem 72.4OcDeCeMi-NaDceOctgNo de vida. Cada chefe celestial vencido dá ao jogador o "Poder Celestial"
+// (multiplica dano e vida dentro do céu), então cada ilha nova pesa como uma região do mundo normal: ~25 min de farm, com poções.
+const hpForteCeu = (a) => { const B = BIOMAS[CEU_B0 + a]; return D.n(Math.max(...B.esp.map((i) => ESP[i].hp))).mul(escBio(B.i)).mul(9); };
+const HP_ULTIMO_CEU = D.n('7.24e354871');
+const CEU_DELTA = (HP_ULTIMO_CEU.log10() - hpForteCeu(N_CEU - 1).mul(7).log10()) / (N_CEU - 1);
+const escCeu = (a) => D.n(10).pow(CEU_DELTA * a);
+function nivelCeu() { let L = 0; while (L < N_CEU && S.ceuVencidos && S.ceuVencidos[L]) L++; return L; }
+const multCeu = () => escCeu(nivelCeu());
+let estaNoCeu = false; // atualizado a cada quadro (o jogador está no mundo celestial?)
+const naCeu = () => estaNoCeu;
 // estados globais usados por vários módulos (definidos cedo para não dar erro de ordem)
 const CLIMA = { ativo: null, fim: 0, prox: 0, lista: [] };
 const LOCK = { m: null, mira: null };
@@ -1545,7 +1649,7 @@ function lerSave(txt) {
   n.equip = Object.assign({ capacete: null, peitoral: null, calca: null, bota: null }, d.equip || {}); for (const k in n.equip) n.equip[k] = reviverItem(n.equip[k]);
   n.mat = d.mat && typeof d.mat === 'object' ? d.mat : {}; n.aneis = d.aneis && typeof d.aneis === 'object' ? d.aneis : {};
   n.roda = (Array.isArray(d.roda) ? d.roda : []).slice(0, 5); while (n.roda.length < 5) n.roda.push(null);
-  n.chefeMorte = d.chefeMorte || {}; n.habVistas = d.habVistas || {}; n.arcVit = Array.isArray(d.arcVit) ? d.arcVit.concat([0, 0, 0, 0]).slice(0, 4) : [0, 0, 0, 0]; n.buffs = d.buffs || {}; n.est = d.est || {}; n.build = d.build && d.build.xp ? d.build : { xp: {}, uso: {} }; n.mundiaisFeitos = d.mundiaisFeitos || {}; n.mundiaisTem = Array.isArray(d.mundiaisTem) ? d.mundiaisTem.filter((i) => MUNDIAIS[i]) : []; n.cdMundial = +d.cdMundial || 0; n.mundial = Number.isInteger(d.mundial) && MUNDIAIS[d.mundial] ? d.mundial : null; if (n.mundial !== null && !n.mundiaisTem.includes(n.mundial)) { n.mundiaisTem.push(n.mundial); n.mundiaisFeitos[n.mundial] = 1; } n.chefesVencidos = d.chefesVencidos || {}; n.marca = d.marca && MARCAS[d.marca.i] ? { i: d.marca.i | 0, nv: clamp(d.marca.nv | 0, 1, 5) } : null; n.selos = d.selos || {}; n.visitadas = d.visitadas || {}; n.reinosVistos = d.reinosVistos || {};
+  n.chefeMorte = d.chefeMorte || {}; n.habVistas = d.habVistas || {}; n.arcVit = Array.isArray(d.arcVit) ? d.arcVit.concat([0, 0, 0, 0]).slice(0, 4) : [0, 0, 0, 0]; n.buffs = d.buffs || {}; n.est = d.est || {}; n.build = d.build && d.build.xp ? d.build : { xp: {}, uso: {} }; n.mundiaisFeitos = d.mundiaisFeitos || {}; n.mundiaisTem = Array.isArray(d.mundiaisTem) ? d.mundiaisTem.filter((i) => MUNDIAIS[i]) : []; n.cdMundial = +d.cdMundial || 0; n.mundial = Number.isInteger(d.mundial) && MUNDIAIS[d.mundial] ? d.mundial : null; if (n.mundial !== null && !n.mundiaisTem.includes(n.mundial)) { n.mundiaisTem.push(n.mundial); n.mundiaisFeitos[n.mundial] = 1; } n.chefesVencidos = d.chefesVencidos || {}; n.marca = d.marca && MARCAS[d.marca.i] ? { i: d.marca.i | 0, nv: clamp(d.marca.nv | 0, 1, 5) } : null; n.selos = d.selos || {}; n.ceuAberto = !!d.ceuAberto; n.ceuVencidos = d.ceuVencidos || {}; n.visitadas = d.visitadas || {}; n.reinosVistos = d.reinosVistos || {};
   // ids únicos: garante que o próximo id não repete nenhum item salvo
   let maior = 0; for (const it of [...n.inv, ...n.barra, ...Object.values(n.equip)]) if (it && it.id > maior) maior = it.id; n.nid = Math.max(n.nid || 1, maior + 1);
   return n;
@@ -1697,6 +1801,13 @@ pocao('invis', 'Poção da Invisibilidade', [1], '#9aa0ff', 'invis', () => 'Mons
 pocao('fenix', 'Poção da Fênix', [1], '#ff7a2a', 'fenix', () => 'Se cair nos próximos 10 min, volta com a vida cheia');
 // raridade da poção: tiers mais altos são mais raros
 for (const p of POCOES) { const n = POCOES.filter((q) => q.base === p.base).length; p.rar = Math.round((p.tier / Math.max(1, n - 1)) * (n >= 6 ? 7 : n >= 3 ? 5 : 4)); }
+// elixires celestiais: só caem no mundo celestial; somam com as poções do mesmo efeito (ficam nos níveis 7 e 8)
+{ const n0 = POCOES.length;
+  pocao('elixAtr', 'Elixir Celestial de Poder', [1.5, 2.5], '#ffb0f0', 'atr', (v) => '+' + v * 100 + '% em Espada, Magia e Vida por 5 min');
+  pocao('elixPts', 'Elixir Celestial de Prismas', [3, 5], '#fff6c0', 'pontos', (v) => '+' + v * 100 + '% de pontos por 5 min');
+  pocao('elixDrop', 'Elixir Celestial de Fortuna', [4, 6], '#ffe060', 'drop', (v) => '+' + v * 100 + '% de chance de baús e materiais por 5 min');
+  pocao('elixVida', 'Elixir Celestial da Vida', [0.03, 0.05], '#a0ffd0', 'regen', (v) => 'Regenera ' + v * 100 + '% da vida por segundo por 2 min');
+  for (const p of POCOES.slice(n0)) { p.elixir = 1; p.rar = 9 + p.tier * 2; p.tier += 7; } }
 
 // ---------------- materiais ----------------
 // a ordem dos ids nunca muda (o save guarda os ids): os blocos antigos vêm primeiro e tudo que é novo entra no fim
@@ -1713,10 +1824,13 @@ ARCANJOS_D.forEach(([n, cor], i) => { MAT_ARC[i] = ['Pena de ' + n, 'Auréola de
 ['Pó Prismático', 'Fio de Luz', 'Essência Pura', 'Cinza Estelar', 'Gota do Tempo', 'Lasca do Vazio', 'Ferro Celeste', 'Âmbar Antigo', 'Selo Arcano', 'Chave Divina'].forEach((n, k) => MAT_GER.push(novoMat(n, ['#fff3a8', '#fffbe0', '#c8f0ff', '#c0b0ff', '#7ae0ff', '#6a3aa0', '#c8d8f0', '#e8a040', '#ff60e0', '#ffd84a'][k], 2 + Math.floor(k / 3))));
 for (const b of BIOMAS.slice(0, 50)) MAT_BIO[b.i].push(novoMat('Essência de ' + b.mat, b.cor, 2));
 // ---- atualização Bolha (ids 452 em diante) ----
-for (const e of ESP.slice(60)) MAT_ESP[e.i] = PARTES[e.arq].map((p, k) => novoMat(p + ' de ' + e.nome, k === 2 ? e.cor2 : e.cor, k));
-for (const b of BIOMAS.slice(50)) fragCrist(b);
-for (const c of CHEFES.filter((c) => c.k >= 25)) matsChefe(c);
-for (const b of BIOMAS.slice(50)) MAT_BIO[b.i].push(novoMat('Essência de ' + b.mat, b.cor, 2));
+for (const e of ESP.slice(60).filter((q) => !q.celeste)) MAT_ESP[e.i] = PARTES[e.arq].map((p, k) => novoMat(p + ' de ' + e.nome, k === 2 ? e.cor2 : e.cor, k));
+for (const b of BIOMAS.slice(50, CEU_B0)) fragCrist(b);
+for (const c of CHEFES.filter((c) => c.k >= 25 && c.k < 72)) matsChefe(c);
+for (const b of BIOMAS.slice(50, CEU_B0)) MAT_BIO[b.i].push(novoMat('Essência de ' + b.mat, b.cor, 2));
+// ---- mundo celestial (ids depois de todos os anteriores) ----
+for (const b of BIOMAS.slice(CEU_B0)) { fragCrist(b); MAT_BIO[b.i].push(novoMat('Essência de ' + b.mat, b.cor, 2)); }
+for (const c of CHEFES.filter((c) => c.tipo === 'ceu')) matsChefe(c);
 const matChefe = (bi) => (CHEFE_DO_BIO[bi] ? MAT_CHEFE[CHEFE_DO_BIO[bi].k] : null);
 const RAR_MAT = ['Comum', 'Incomum', 'Raro', 'Épico', 'Lendário', 'Mítico', 'Ancestral', 'Celestial', 'Divino'];
 
@@ -1758,12 +1872,12 @@ function podeForjar(i) {
 }
 // ---------------- itens mundiais (forjados no Castelo Antigo de Avalan) ----------------
 const MUNDIAIS = [
-  { k: 'coroa', nome: 'Coroa do Sol Eterno', el: 'fogo', cor: '#ffb020', d: 'Um sol desce sobre a região e queima tudo' },
-  { k: 'martelo', nome: 'Martelo de Avalan', el: 'raio', cor: '#7ae0ff', d: 'Mil raios caem em volta de você' },
-  { k: 'grimorio', nome: 'Grimório do Fim', el: 'arcano', cor: '#ff60e0', d: 'As páginas se abrem e a realidade se desfaz' },
-  { k: 'calice', nome: 'Cálice das Marés', el: 'agua', cor: '#3ab0ff', d: 'Um maremoto circular varre a região' },
-  { k: 'olho', nome: 'Olho do Abismo', el: 'sombra', cor: '#8a5aff', d: 'O abismo olha de volta e devora a luz' },
-  { k: 'asa', nome: 'Asa do Primeiro Anjo', el: 'luz', cor: '#fff3a0', d: 'Penas de luz caem como lâminas do céu' },
+  { k: 'coroa', nome: 'Coroa do Sol Eterno', el: 'fogo', cor: '#ffb020', d: 'Um sol fica sobre você por 90 s: a cada segundo queima tudo a 90 m com 70x o seu poder, e seu dano dobra', d2: 'Um sol eterno desce sobre você' },
+  { k: 'martelo', nome: 'Martelo de Avalan', el: 'raio', cor: '#7ae0ff', d: 'Uma tempestade te segue por 90 s: 13 raios por segundo (70x o seu poder, 60% cada) atordoam tudo a 100 m, e você corre 60% mais rápido', d2: 'A tempestade de Avalan te segue' },
+  { k: 'grimorio', nome: 'Grimório do Fim', el: 'arcano', cor: '#ff60e0', d: 'Por 90 s a realidade se desfaz a 90 m: monstros perdem 5% da vida por segundo, chefes 1,2% (os mais fortes 0,5%), e suas habilidades ficam sem recarga', d2: 'As páginas do fim se abrem' },
+  { k: 'calice', nome: 'Cálice das Marés', el: 'agua', cor: '#3ab0ff', d: 'Por 90 s um maremoto sai de você a cada 4 s (140x o seu poder, a 85 m, empurra tudo), você cura 5% por segundo e fica imune a lava e veneno', d2: 'As marés obedecem a você' },
+  { k: 'olho', nome: 'Olho do Abismo', el: 'sombra', cor: '#8a5aff', d: 'Por 90 s um olho gigante vigia 100 m: tudo fica 80% mais lento e recebe 5x mais dano, raios de sombra caem a cada 1,5 s, e você recebe metade do dano', d2: 'O abismo abre o olho' },
+  { k: 'asa', nome: 'Asa do Primeiro Anjo', el: 'luz', cor: '#fff3a0', d: 'Por 90 s você ganha asas: fica invulnerável, plana, pula 3x mais alto, e penas de luz (70x o seu poder) caem 10 vezes por segundo a 90 m', d2: 'As asas do primeiro anjo se abrem' },
 ];
 function custoMundial(i) {
   const r = [[MAT_ARC[i % 4][2], 2], [MAT_ARC[(i + 1) % 4][1], 4], [MAT_GER[9], 30], [MAT_GER[8], 40], [MAT_GER[6], 60]];
@@ -1846,7 +1960,7 @@ function gerarItem(bi, rar, opc) {
   return it;
 }
 function gerarPocao(bi, rarMin) {
-  const ok = POCOES.filter((p) => p.rar <= Math.max(rarMin || 0, 1 + Math.floor(BIOMAS[bi].anel / 2)) + 1);
+  const B = BIOMAS[bi], el = B && B.ceu && Math.random() < 0.3, ok = el ? POCOES.filter((p) => p.elixir) : POCOES.filter((p) => !p.elixir && p.rar <= Math.max(rarMin || 0, 1 + Math.floor(B.anel / 2)) + 1);
   const pc = ok[Math.floor(Math.random() * ok.length)];
   return { id: S.nid++, tipo: 'pocao', pid: pc.id, rar: pc.rar, qtd: 1, nome: pc.nome };
 }
@@ -1965,9 +2079,9 @@ function buff(k, v, dur) { const t = agoraS(), b = BUFF[k]; if (b && b.fim > t) 
 // poções ficam em 'efeito#nível' (ex.: sorte#2): níveis diferentes valem ao mesmo tempo e se somam
 const MAX_POCAO = 7200; // tempo máximo acumulado de uma mesma poção (2 h)
 function buffPocao(k, tier, v, dur, nome, cor) { const t = agoraS(), ch = k + '#' + tier, b = BUFF[ch]; if (b && b.fim > t) { b.fim = Math.min(t + MAX_POCAO, b.fim + dur); b.dur = b.fim - t; b.v = v; } else BUFF[ch] = { v, fim: t + dur, dur, nome, cor }; buffMudou = true; return BUFF[ch].fim - t; }
-const bv = (k) => { const t = agoraS(); let s = 0; const b = BUFF[k]; if (b && b.fim > t) s += b.v; for (let i = 0; i < 7; i++) { const p = BUFF[k + '#' + i]; if (p && p.fim > t) s += p.v; } return s; };
-function acabarBuff(k) { for (const c of [k, 0, 1, 2, 3, 4, 5, 6].map((i) => (i === k ? k : k + '#' + i))) if (BUFF[c]) BUFF[c].fim = 0; buffMudou = true; }
-function consumirBuff(k) { if (BUFF[k] && BUFF[k].fim > agoraS()) { delete BUFF[k]; return true; } for (let i = 0; i < 7; i++) if (BUFF[k + '#' + i] && BUFF[k + '#' + i].fim > agoraS()) { delete BUFF[k + '#' + i]; buffMudou = true; return true; } return false; }
+const bv = (k) => { const t = agoraS(); let s = 0; const b = BUFF[k]; if (b && b.fim > t) s += b.v; for (let i = 0; i < 9; i++) { const p = BUFF[k + '#' + i]; if (p && p.fim > t) s += p.v; } return s; };
+function acabarBuff(k) { for (const c of [k, 0, 1, 2, 3, 4, 5, 6, 7, 8].map((i) => (i === k ? k : k + '#' + i))) if (BUFF[c]) BUFF[c].fim = 0; buffMudou = true; }
+function consumirBuff(k) { if (BUFF[k] && BUFF[k].fim > agoraS()) { delete BUFF[k]; return true; } for (let i = 0; i < 9; i++) if (BUFF[k + '#' + i] && BUFF[k + '#' + i].fim > agoraS()) { delete BUFF[k + '#' + i]; buffMudou = true; return true; } return false; }
 let buffMudou = false, buffAssin = '';
 // buffs que estavam ativos quando o jogo foi salvo continuam com o tempo que faltava
 try { for (const k in S.buffs || {}) { const b = S.buffs[k]; if (b && b.resta > 0) BUFF[k] = { v: +b.v || 0, fim: agoraS() + Math.min(b.resta, MAX_POCAO), dur: b.dur || b.resta, nome: b.nome, cor: b.cor }; } } catch (e) { /* ok */ }
@@ -1975,8 +2089,8 @@ try { for (const k in S.buffs || {}) { const b = S.buffs[k]; if (b && b.resta > 
 const ZB = { dano: 0, recarga: 0, vel: 0, reducao: 0, cura: 0, limpa: 0, roubo: 0, crit: 0, critD: 0, pontos: 0, imune: 0, pulo: 0, lentoJ: 0 };
 const evento = (k) => CLIMA.lista.some((e) => e.k === k);
 const nSelos = () => (S.selos ? Object.keys(S.selos).length : 0); // selos dos chefes definitivos: +30% de dano e de pontos cada
-const multDano = () => (1 + bv('furia') + bv('barbaro') + ZB.dano + bonusBuild('berserker') * 0.005) * (bv('aFuria') ? 2 : 1) * multMundialDano() * (1 + 0.3 * nSelos());
-const multRecarga = () => (bv('aPressa') || bv('hmPasso') ? 0 : Math.max(0.15, (1 - bv('recarga')) * (1 - ZB.recarga) * (1 - (E.recarga || 0))));
+const multDano = () => (bv('wCoroa') ? 2 : 1) * (1 + bv('furia') + bv('barbaro') + ZB.dano + bonusBuild('berserker') * 0.005) * (bv('aFuria') ? 2 : 1) * multMundialDano() * (1 + 0.3 * nSelos());
+const multRecarga = () => (bv('aPressa') || bv('hmPasso') || bv('wGrimorio') ? 0 : Math.max(0.15, (1 - bv('recarga')) * (1 - ZB.recarga) * (1 - (E.recarga || 0))));
 const multDrop = () => Math.max(0.1, 1 + bv('drop') + (E.dropP || 0)) * (bv('aFortuna') ? 2 : 1) * multMundialDrop() * (evento('tesouro') ? 50 : 1);
 const multPontos = () => Math.max(0.1, 1 + bv('pontos') + (E.pontosP || 0) + bonusBuild('fortuna') * 0.005) * (bv('aPrisma') ? 2 : 1) * (1 + ZB.pontos) * (evento('solAzul') ? 6 : 1) * multMundialPontos() * (1 + 0.3 * nSelos());
 const multLimite = () => 1 + bv('limite') + (E.limite || 0) + bonusBuild('arcano') * 0.01;
@@ -2301,7 +2415,7 @@ const HAB_MUNDIAL = [
   { k: 'gelo', nome: 'Era do Gelo Absoluto', arma: 'cajado', mag: 1, cor: '#bfefff', cor2: '#ffffff', d: 'MAGIA MUNDIAL · 40 s em toda a região visível: tudo congela (ninguém anda nem ataca) e recebe 10x mais dano' },
   { k: 'paraiso', nome: 'Paraíso Prismático', arma: 'cajado', mag: 1, cor: '#ff80e0', cor2: '#80f0ff', d: 'MAGIA MUNDIAL · 40 s em toda a região visível: você não recebe dano, cura 10% por segundo, e cada abate dá 50x pontos e 30x baús e materiais' },
 ];
-Object.assign(BUFF_INFO, { hmLaminas: ['Mil Lâminas', '#7ad8ff'], hmCoroa: ['Coroa do Rei Caído', '#ffd84a'], hmEclipse: ['Eclipse Eterno', '#ff3a5a'], hmTita: ['Titã Ancestral', '#ff6a3a'], hmPasso: ['Passo Entre Mundos', '#5affd8'] });
+Object.assign(BUFF_INFO, { wCoroa: ['Sol Eterno', '#ffb020'], wMartelo: ['Tempestade de Avalan', '#7ae0ff'], wGrimorio: ['Grimório do Fim', '#ff60e0'], wCalice: ['Marés', '#3ab0ff'], wOlho: ['Olho do Abismo', '#8a5aff'], wAsa: ['Asas do Anjo', '#fff3a0'], hmLaminas: ['Mil Lâminas', '#7ad8ff'], hmCoroa: ['Coroa do Rei Caído', '#ffd84a'], hmEclipse: ['Eclipse Eterno', '#ff3a5a'], hmTita: ['Titã Ancestral', '#ff6a3a'], hmPasso: ['Passo Entre Mundos', '#5affd8'] });
 // magia mundial ativa (segue o jogador e cobre toda a região carregada)
 let MAG_M = null;
 const raioVisivel = () => Math.max(150, (QUAL[S.cfg.q].raio + 0.5) * CW);
@@ -2399,6 +2513,7 @@ function recalc() {
   E.crit = clamp(0.08 + ac.crit + bv('crit'), 0, 0.9); E.critD = Math.max(1.2, 1.8 + ac.critD); E.recarga = clamp(ac.recarga, -0.6, 0.6); E.roubo = clamp(ac.roubo, 0, 0.25); E.limite = Math.max(0, ac.limite);
   E.pontosP = ac.pontosP; E.dropP = ac.dropP; E.regen = clamp(ac.regen, 0, 0.05); E.reducao = clamp(ac.reducao, 0, 0.6); E.sangra = clamp(ac.sangra, 0, 0.03); E.danoRec = clamp(ac.danoRec, 0, 2);
   E.efeitos = ac;
+  if (naCeu()) { const M = multCeu(); E.espada = E.espada.mul(M); E.magia = E.magia.mul(M); E.vidaMax = E.vidaMax.mul(M); } // Poder Celestial
   if (antes && J.hp) { J.hp = D.min(E.vidaMax, J.hp.add(D.max(D.Z, E.vidaMax.sub(antes)))); }
 }
 // =====================================================================
@@ -2743,6 +2858,10 @@ function criarMob(esp, x, z, chefe, spawn, opc) {
     tam: (chefe ? (2.7 + chefe.nv * 0.03) * (chefe.tipo === 'def' ? 1.45 : 1) : 1) * esp.tam * (elite ? 1.15 : 1), cd: 1 + Math.random(), wind: 0, alvo: false, vagar: 0, vx: 0, vz: 0, anim: Math.random() * 10, golpe: 0, flash: 0, esp2: 3, hpVis: 0, kb: [0, 0], nome: chefe ? chefe.nome : (elite ? esp.nome + ' de Elite' : esp.nome), dash: 0, st: {}, tInv: 6, tCura: 3, lacaios: [] };
   if (opc.arc) Object.assign(m, opc.arc.mob);
   if (opc.extra) Object.assign(m, opc.extra);
+  // mundo celestial: tudo escala pela ilha (o Poder Celestial do jogador compensa)
+  { const Bc = BIOMAS[bi]; if (Bc && Bc.ceu && !opc.arc && !opc.extra) { const Ec = escCeu(Bc.a);
+    if (chefe) { m.hpMax = hpDoChefe(chefe); m.dano = D.n(Math.max(...Bc.esp.map((q) => ESP[q].dano))).mul(danoBioma(bi)).mul(1.5 * 5).mul(Ec).mul(nevoa); m.pts = ptsChefe(bi).floor(); }
+    else { m.hpMax = m.hpMax.mul(3).mul(Ec).floor(); m.dano = m.dano.mul(Ec); m.pts = D.max(D.n(1), m.pts.div(8).floor()); } } }
   // atributos: chefes 2–4, elites 1, magos sempre curam ou invocam
   if (opc.arc) m.atr = opc.arc.atr;
   else if (chefe) m.atr = sortearAtrib(Math.min(5, 2 + Math.floor(chefe.nv / 6)), chefe.k * 13 + 5, esp.x.magico ? ['cura'] : null);
@@ -3046,21 +3165,22 @@ const CEU = { dia: 1, fase: 0.3 };
 const NOITE = { zen: hex('#0a1030'), meio: hex('#1c2658'), hor: hex('#3a4680'), nev: hex('#2a3460') };
 function atualizarCeu(dd, aa, dt) {
   // dia e noite: dura 20 min; a noite é mais curta que o dia
-  CEU.fase = ((Date.now() / 1000 + 300) % CICLO) / CICLO;
+  CEU.fase = estaNoCeu ? 0.21 : ((Date.now() / 1000 + 300) % CICLO) / CICLO; // no céu é sempre dia
   const elev = Math.sin(CEU.fase * TAU) + 0.3, az = CEU.fase * TAU, dia = sstep(-0.12, 0.3, elev), por = Math.max(0, 1 - Math.abs(elev - 0.08) / 0.3) * dia;
   CEU.dia = dia;
   const cA = mistura(dd, aa, 'ceuAC'), cB = mistura(dd, aa, 'ceuBC'), nevB = mistura(dd, aa, 'nevC'), solB = mistura(dd, aa, 'solC');
   let zen = mixC(NOITE.zen, mulC(cA, 0.82), dia), meio = mixC(NOITE.meio, cA, dia), hor = mixC(NOITE.hor, cB, dia), nev = mixC(NOITE.nev, nevB, dia);
   hor = mixC(hor, hex('#ff9a5a'), por * 0.55); nev = mixC(nev, hex('#f0a070'), por * 0.3);
   const ev = CLIMA.ativo ? CLIMA.ativo.k : null;
+  const azul = ev === 'solAzul' || estaNoCeu || CINE.azul > 0.4; // o sol do mundo celestial é sempre azul
   if (ev === 'sangue') { zen = mixC(zen, hex('#2a0206'), 0.8); meio = mixC(meio, hex('#5a0a12'), 0.8); hor = mixC(hor, hex('#b0202a'), 0.75); nev = mixC(nev, hex('#4a1016'), 0.7); }
-  if (ev === 'solAzul') { zen = mixC(zen, hex('#1a6ad8'), 0.6); meio = mixC(meio, hex('#5ac8ff'), 0.6); hor = mixC(hor, hex('#c8f6ff'), 0.6); nev = mixC(nev, hex('#c0ecff'), 0.5); }
+  if (azul) { zen = mixC(zen, hex('#1a6ad8'), 0.6); meio = mixC(meio, hex('#5ac8ff'), 0.6); hor = mixC(hor, hex('#c8f6ff'), 0.6); nev = mixC(nev, hex('#c0ecff'), 0.5); }
   if (ev === 'nevoa') { zen = mixC(zen, hex('#2a2238'), 0.7); meio = mixC(meio, hex('#4a405a'), 0.7); hor = mixC(hor, hex('#6a6078'), 0.75); nev = mixC(nev, hex('#5a5068'), 0.85); }
   if (ev === 'meteoros') { zen = mixC(zen, hex('#2a1408'), 0.6); hor = mixC(hor, hex('#ff7a3a'), 0.5); nev = mixC(nev, hex('#7a4a3a'), 0.4); }
   R.ceuA = zen; R.ceuB = hor; R.nev = nev;
   const luz = 0.58 + 0.42 * dia;
-  R.solC = mulC(mixC(hex('#8090c8'), mixC(solB, hex('#ffb070'), por * 0.6), dia), 0.62 * luz * (ev === 'solAzul' ? 1.15 : 1));
-  if (ev === 'solAzul') R.solC = mixC(R.solC, mulC(hex('#a8e8ff'), 0.7), 0.5); if (ev === 'sangue') R.solC = mixC(R.solC, mulC(hex('#ff5050'), 0.5), 0.5);
+  R.solC = mulC(mixC(hex('#8090c8'), mixC(solB, hex('#ffb070'), por * 0.6), dia), 0.62 * luz * (azul ? 1.15 : 1));
+  if (azul) R.solC = mixC(R.solC, mulC(hex('#a8e8ff'), 0.7), 0.5); if (ev === 'sangue') R.solC = mixC(R.solC, mulC(hex('#ff5050'), 0.5), 0.5);
   R.ceu = mulC(mixC(hor, [0.9, 0.9, 0.95], 0.35), 0.58 * (0.75 + 0.25 * dia)); R.chao = mulC(hor, 0.3 * (0.8 + 0.2 * dia));
   const ck = [zen, meio, hor, nev].map((c) => c.map((x) => x.toFixed(2)).join()).join('|'); if (ck !== ceuChave) { ceuChave = ck; montarCeu(zen, meio, hor, nev); }
   // sol e lua
@@ -3068,8 +3188,8 @@ function atualizarCeu(dd, aa, dt) {
   const ld = [-sd[0], -sd[1], -sd[2]], solAlto = sd[1] > -0.05;
   const luzDir = solAlto ? sd : ld; const ly = Math.max(0.25, luzDir[1]); const ln = Math.hypot(luzDir[0], ly, luzDir[2]); R.sol = [-luzDir[0] / ln, -ly / ln, -luzDir[2] / ln];
   SOL_N.p = [R.cam[0] + sd[0] * 520, R.cam[1] + sd[1] * 520, R.cam[2] + sd[2] * 520]; SOL_N.vis = sd[1] > -0.12;
-  SOL_N.disco.cor = ev === 'solAzul' ? hex('#7ae8ff') : hex(por > 0.3 ? '#ffc890' : '#fff6d8'); SOL_N.halos.forEach((h, k) => { h.cor = ev === 'solAzul' ? hex('#5ac8ff') : hex(por > 0.3 ? '#ff9a5a' : '#ffe9a0'); h.a = (0.16 / (k + 1)) * (ev === 'solAzul' ? 1.8 : 1); });
-  SOL_N.disco.s = ev === 'solAzul' ? [34, 34, 34] : [26, 26, 26]; SOL_N.r[1] += dt * 0.1;
+  SOL_N.disco.cor = azul ? hex('#7ae8ff') : hex(por > 0.3 ? '#ffc890' : '#fff6d8'); SOL_N.halos.forEach((h, k) => { h.cor = azul ? hex('#5ac8ff') : hex(por > 0.3 ? '#ff9a5a' : '#ffe9a0'); h.a = (0.16 / (k + 1)) * (azul ? 1.8 : 1); });
+  SOL_N.disco.s = azul ? [34, 34, 34] : [26, 26, 26]; SOL_N.r[1] += dt * 0.1;
   const luaBig = ev === 'sangue' ? 2 : 1, lPos = ev === 'sangue' ? [0.4, 0.55, -0.7] : ld; LUA_N.p = [R.cam[0] + lPos[0] * 520, R.cam[1] + Math.max(lPos[1], 0.25) * 520, R.cam[2] + lPos[2] * 520];
   LUA_N.vis = ev === 'sangue' || ld[1] > -0.05; LUA_N.disco.cor = ev === 'sangue' ? hex('#ff3030') : hex('#eef2ff'); LUA_N.disco.s = [18 * luaBig, 18 * luaBig, 18 * luaBig]; LUA_N.halos.forEach((h) => (h.cor = ev === 'sangue' ? hex('#ff2020') : hex('#b8c8ff')));
   estrelas.p = R.cam.slice(); estrelas.a = clamp((0.85 - dia) * 1.2, 0, 1) * (ev === 'nevoa' ? 0.2 : 1); estrelas.vis = estrelas.a > 0.02; estrelas.r[1] = CEU.fase * 0.6;
@@ -3153,14 +3273,28 @@ const TITULOS = [
   [1e105, 'Leviatã dos Céus', '#3ab0c8|#e0faff|#1a6a8a'], [1e108, 'Ômega Vivo', '#ff80e0|#ffffff|#80f0ff|#ffe24a'], [1e111, 'Primeira Luz', '#ffffff|#fff6c0|#ffffff'],
   [1e114, 'Lenda Além das Lendas', '#ff5a6a|#ffb020|#ffe24a|#5effa0|#5ac8ff|#c080ff'], [1e117, 'O Infinito Desperto', '#ffd84a|#ffffff|#6a3aff|#ffd84a'], [1e120, 'Bolha Primordial Encarnada', '#bfe8ff|#ffffff|#ffd0f0|#fff4c0|#d0ffe8'],
 ];
+// 70 títulos do mundo celestial: cada um mais monstruoso (com brilho, faíscas e pulsação no nome)
+{
+  const N = ['Arauto do Céu Partido', 'Lâmina que Corta Estrelas', 'Coração de Mil Sóis', 'Dragão das Nuvens Eternas', 'Serafim de Seis Asas', 'Tempestade Encarnada', 'Senhor das Ilhas Celestes', 'Devorador de Constelações', 'Coroa do Sol Azul', 'Juiz dos Arcanjos',
+    'Eco do Primeiro Trovão', 'Titã Entre as Nuvens', 'Rei do Firmamento', 'Sombra que Engoliu a Lua', 'Fênix de Cristal Eterno', 'Guardião do Último Portão', 'Imperador das Auroras', 'Abismo com Coroa', 'Mão Esquerda do Destino', 'Mão Direita do Infinito',
+    'Leviatã das Galáxias', 'Tirano das Estrelas Cadentes', 'Senhor do Céu Sem Fim', 'Arcanjo Sem Nome', 'O Que Caminha Sobre o Sol', 'Coroa de Supernovas', 'Dragão Primordial do Éter', 'Quebrador de Firmamentos', 'Lorde das Mil Galáxias', 'Voz que Acorda Mundos',
+    'Asas que Cobrem o Céu', 'O Eclipse Eterno', 'Imperador do Vazio Dourado', 'Fera Celestial Indomável', 'Trono Acima dos Tronos', 'Ruína dos Serafins', 'O Sol que Devora Sóis', 'Senhor das Marés Cósmicas', 'Colosso de Luz Viva', 'Último Guardião do Céu',
+    'O Despertar do Cosmos', 'Coroa de Buracos Negros', 'Dragão que Sonha Universos', 'Deus Menor do Trovão', 'Tecelão das Constelações', 'O Infinito Coroado', 'Arquiteto das Estrelas', 'Senhor do Tempo Partido', 'A Fome Entre as Galáxias', 'Imperador das Bolhas Cósmicas',
+    'Lenda Escrita no Céu', 'O Grande Silêncio Estelar', 'Coração do Big Bang', 'Rei Sobre Todos os Reis', 'A Luz Antes da Luz', 'Dragão Ômega', 'Soberano dos 90 Céus', 'O Que Venceu os Arcanjos', 'Eternidade Desperta', 'Colapso das Estrelas',
+    'Divindade Prismática', 'O Universo de Joelhos', 'Fim e Começo', 'Criador de Céus', 'Deus das Bolhas Eternas', 'O Céu Inteiro', 'Além do Infinito', 'Origem de Todas as Coisas', 'A Bolha que Contém o Cosmos', 'BOLHA ABSOLUTA'];
+  const P = ['#5ae0ff|#ffffff|#3a6aff', '#ffb020|#fff6c0|#ff4a1a', '#ff5ae0|#ffd0ff|#8a1aff', '#5aff9a|#e0fff0|#1a8a5a', '#ffe24a|#ffffff|#5ac8ff', '#ff3a3a|#ffb020|#ff3a3a', '#c080ff|#ffffff|#3a1a8a', '#7af0ff|#ffd84a|#ff80e0',
+    '#ffd84a|#1a1430|#ffd84a', '#ffffff|#bfe8ff|#ffd0f0', '#ff6a1a|#ffe24a|#ff2a6a', '#3ab0c8|#e0faff|#1a6a8a', '#ff80e0|#ffffff|#80f0ff|#ffe24a', '#ff5a6a|#ffb020|#ffe24a|#5effa0|#5ac8ff|#c080ff'];
+  N.forEach((n, k) => TITULOS.push([Number('1e' + (123 + k * 2)), n, k >= 60 ? P[13] + '|#ffffff' : k >= 45 ? P[12 + (k % 2)] : P[k % 12]]));
+}
 const D_TIT = TITULOS.map((t) => D.n(t[0]));
 function nivelTitulo() { let i = 0; for (let k = 0; k < TITULOS.length; k++) if (S.total.cmp(D_TIT[k]) >= 0) i = k; return i; }
 const corTitulo = (i) => (TITULOS[i][2] === 'arco' ? '#ffffff' : TITULOS[i][2].split('|')[0]);
 function estiloTitulo(el, i) {
-  const c = TITULOS[i][2]; el.className = 'tt t' + Math.min(i, 12) + (i >= 13 ? ' tg' + (i >= 33 ? ' t3' : i >= 23 ? ' t2' : ' t1') : '');
+  const c = TITULOS[i][2]; el.className = 'tt t' + Math.min(i, 12) + (i >= 13 ? ' tg' + (i >= 103 ? ' t3 t6' : i >= 83 ? ' t3 t5' : i >= 63 ? ' t3 t4' : i >= 43 ? ' t3 t4b' : i >= 33 ? ' t3' : i >= 23 ? ' t2' : ' t1') : '');
   if (i >= 13) { el.style.color = ''; el.style.setProperty('--g', 'linear-gradient(90deg,' + c.split('|').concat(c.split('|')[0]).join(',') + ')'); el.style.setProperty('--c1', c.split('|')[0]); }
   else { el.style.color = corTitulo(i); el.style.removeProperty('--g'); }
-  el.textContent = i >= 33 ? '✦ ' + TITULOS[i][1] + ' ✦' : TITULOS[i][1];
+  el.dataset.n = i >= 43 ? String(Math.min(9, Math.floor((i - 43) / 7) + 1)) : '';
+  el.textContent = i >= 103 ? '❖ ' + TITULOS[i][1] + ' ❖' : i >= 83 ? '✧✦ ' + TITULOS[i][1] + ' ✦✧' : i >= 33 ? '✦ ' + TITULOS[i][1] + ' ✦' : TITULOS[i][1];
 }
 // ---------------- barra de vida, nome e título em cima da cabeça ----------------
 const euEl = document.createElement('div'); euEl.id = 'eu'; euEl.innerHTML = '<div class="nm"><span class="tt"></span><b></b></div><div class="hp"><i></i><em></em></div>'; rot.appendChild(euEl);
@@ -3186,7 +3320,23 @@ const PALETAS = [['#7ee08a', '#ffffff'], ['#ffe24a', '#ff9a3a'], ['#9fe8ff', '#f
   ['#ffe24a', '#ffffff'], ['#d8e0f0', '#9aa0b8'], ['#ffb020', '#fff0c0'], ['#3a8aff', '#a0e0ff'], ['#2aff9a', '#e0fff0'], ['#c8d0ff', '#ffffff'], ['#ffb040', '#fff0b0'], ['#b06bff', '#ffd0ff'], ['#bff4ff', '#ffffff'], ['#7affd0', '#d0fff0'],
   ['#f4efe4', '#c8b8a0'], ['#ff9ac8', '#9aff9a'], ['#ff3a3a', '#ffe0e0'], ['#a0a8ff', '#ffffff'], ['#bfe8ff', '#ffd0f0'], ['#3aa06a', '#ffd84a'], ['#e0e8f0', '#9fb0c8'], ['#1a1430', '#ffd84a'], ['#60ffb0', '#c8ffe8'], ['#ff5a1a', '#ff2a6a'],
   ['#ffd84a', '#ffffff'], ['#ffc8f0', '#fff6d8'], ['#ff7a2a', '#ffe060'], ['#2a2a3a', '#9fe8ff'], ['#5affb0', '#c080ff'], ['#c060ff', '#ff9aff'], ['#ff4a1a', '#ffb020'], ['#d8fff4', '#7ae0c0'], ['#80e0ff', '#ffffff'], ['#2a1a3a', '#c060ff']];
+NOMES_AURA.push('Mandala Solar', 'Tornado Celeste', 'Dragão de Jade', 'Coroa de Supernovas', 'Asas do Trovão', 'Véu da Aurora Boreal', 'Planetas Guardiões', 'Serpente Estelar', 'Fúria do Sol Azul', 'Inferno Prismático',
+  'Galáxia Espiral', 'Juízo dos Serafins', 'Tempestade de Cristal', 'Coração de Nebulosa', 'Trono de Relâmpagos', 'Leviatã Etéreo', 'Chamas do Firmamento', 'Eclipse Dourado', 'Asas de Mil Penas', 'Ciclone de Estrelas',
+  'Fênix Colossal', 'Coroa do Vazio', 'Tormenta Rubra', 'Mandala do Tempo', 'Dragão Solar', 'Constelação Viva', 'Aurora Infernal', 'Portal dos Céus', 'Sóis Gêmeos', 'Asas do Abismo',
+  'Furacão de Luz', 'Nebulosa Carmesim', 'Dragão das Marés', 'Trono das Galáxias', 'Colapso Estelar', 'Mandala Arcana', 'Céu em Chamas', 'Serafim de Fogo', 'Supernova Eterna', 'Tornado do Vazio',
+  'Dragão de Cristal', 'Coroa de Planetas', 'Auréola do Juízo', 'Asas da Criação', 'Tempestade Primordial', 'Galáxia Viva', 'Leviatã Solar', 'Mandala Infinita', 'Dragão Ômega', 'Coroa do Universo',
+  'Asas dos 90 Céus', 'Big Bang Contido', 'Abismo Radiante', 'Fúria dos Arcanjos', 'Criação e Ruína', 'Rei dos Céus', 'Eternidade', 'Cosmos Desperto', 'Bolha Cósmica', 'Bolha Absoluta');
+const PALETAS_M = [['#ffb020', '#fff6c0', '#ff4a1a'], ['#5ae0ff', '#ffffff', '#3a6aff'], ['#5aff9a', '#e0fff0', '#1a8a5a'], ['#ff5ae0', '#ffd0ff', '#8a1aff'], ['#ffe24a', '#ffffff', '#5ac8ff'], ['#ff3a3a', '#ffb020', '#3a0a0a'], ['#c080ff', '#ffffff', '#3a1a8a'], ['#7af0ff', '#ffd84a', '#ff80e0'], ['#1a1430', '#ffd84a', '#ffffff'], ['#bfe8ff', '#ffffff', '#ffd0f0'], ['#ff6a1a', '#ffe24a', '#ff2a6a'], ['#3ab0c8', '#e0faff', '#1a6a8a']];
 const AURAS = NOMES_AURA.map((nome, i) => {
+  if (i >= 91) { // auras monstruosas: mandala no chão, tornados, dragão espiritual, planetas, raios, cortina de aurora, asas colossais e coroas gigantes
+    const k = i - 91, M = k / 59, r = (s2) => hash2(i, s2, 4242), pal = PALETAS_M[k % PALETAS_M.length], tem = (s2, pmin) => r(s2) < 0.45 + M * 0.55 || M >= pmin;
+    return { i, nome, c1: pal[0], c2: pal[1], c3: pal[2], mons: 1, M, arco: k >= 50 || k === 9 || k === 34, min: Number('1e' + Math.round(122 + k * 2.4)),
+      orb: 6 + Math.floor(M * 4), orbF: ['octa', 'caixa', 'pir'][Math.floor(r(1) * 3)], orbR: 1.4 + r(2) * 0.6, giro: 1.2 + r(3) * 1.5, base: true, fitas: 0, chamas: 8, espiral: 10 + Math.floor(M * 6),
+      asas: tem(4, 0.5) ? (M > 0.6 ? 3 : 2) : 1, asaF: ['pena', 'cristal', 'morcego', 'borboleta'][Math.floor(r(6) * 4)], halo: true, coroa: true, runas: 10, estrelas: 0, bolhas: k >= 58 || nome.includes('Bolha'), pilar: true, aneis2: 2,
+      mandala: 2 + Math.floor(M * 2), tornado: tem(7, 0.3) ? 2 + Math.floor(M * 2) : 0, dragao: nome.includes('Dragão') || nome.includes('Serpente') || nome.includes('Leviatã') || tem(8, 0.8) ? 12 + Math.floor(M * 6) : 0,
+      planetas: nome.includes('Planeta') || nome.includes('Galáxia') || nome.includes('Sóis') || tem(9, 0.7) ? 2 + Math.floor(M * 2) : 0, raios: nome.includes('Relâmp') || nome.includes('Trovão') || nome.includes('Tempestade') || tem(10, 0.9) ? 4 : 0,
+      cortina: nome.includes('Aurora') || nome.includes('Véu') || tem(11, 0.85) ? 7 : 0, coroaG: M > 0.35, explosao: 2.6 - M * 1.2, part: 14 + M * 16, esc: 2.2 + M * 0.5 };
+  }
   const r = (s) => hash2(i, s, 919), pal = i < 13 ? PALETAS[i] : PALETAS[(i * 7) % PALETAS.length], arco = i >= 84 || i === 40 || i === 64 || i === 75;
   const p = Math.min(1, i / 90); // complexidade 0..1
   return { i, nome, c1: pal[0], c2: pal[1], arco, min: i === 0 ? 0 : Math.pow(10, 1.2 + i * 1.32),
@@ -3218,7 +3368,7 @@ function montarAura() {
     A.costas = g.add(new No());
     for (let par = 0; par < D_.asas; par++) for (const l of [-1, 1]) {
       const a = A.costas.add(new No(null, null, [l * 0.3, 2.35 + par * 0.55, -0.5 - par * 0.1])); a.base = l * (0.45 + par * 0.3); a.lado = l; A.asas.push(a);
-      const n = D_.asaF === 'borboleta' ? 2 : 3, w = Math.min(1.5, esc) * (par ? 0.75 : 1);
+      const n = D_.asaF === 'borboleta' ? 2 : D_.mons ? 4 : 3, w = Math.min(D_.mons ? 2.3 : 1.5, esc) * (par ? 0.8 - par * 0.08 : 1);
       for (let q = 0; q < n; q++) { const pv = a.add(new No()); pv.r = [0, 0, l * (D_.asaF === 'morcego' ? 0.3 - q * 0.35 : 0.55 - q * 0.38)];
         const geo = D_.asaF === 'cristal' ? G.octa : D_.asaF === 'borboleta' ? G.octa : G.caixa, s = D_.asaF === 'borboleta' ? [1.2 * w, 0.9 * w - q * 0.3, 0.05] : D_.asaF === 'cristal' ? [0.9 * w - q * 0.15, 0.22, 0.12] : [1.7 * w - q * 0.25, D_.asaF === 'morcego' ? 0.35 : 0.2, 0.04];
         no(pv, geo, q % 2 ? c2 : c1, [l * 0.85 * w, D_.asaF === 'borboleta' ? (q ? -0.5 : 0.3) : 0, 0], s, D_.asaF === 'morcego' ? 0.6 : 0.42); }
@@ -3227,6 +3377,17 @@ function montarAura() {
   if (D_.halo) { A.halo = g.add(new No(null, null, [0, 3.7, 0])); for (let i = 0; i < 8; i++) { const a = (i / 8) * TAU, h = no(A.halo, G.caixa, c1, [Math.cos(a) * 0.5, 0, Math.sin(a) * 0.5], [0.2, 0.06, 0.08], 0.9); h.r = [0, -a + Math.PI / 2, 0]; } }
   if (D_.coroa) { A.coroa = g.add(new No(null, null, [0, 4.15, 0])); for (let i = 0; i < 7; i++) { const a = (i / 7) * TAU; no(A.coroa, G.pir, i % 2 ? c2 : c1, [Math.cos(a) * 0.42, 0, Math.sin(a) * 0.42], [0.1, 0.36, 0.1], 0.9); } }
   if (D_.pilar) { A.pilar = no(g, G.caixa, c1, [0, 7, 0], [0.5 * esc, 14, 0.5 * esc], 0.12); }
+  if (D_.mons) {
+    const c3 = D_.c3; A.mand = []; A.tor = []; A.drag = []; A.plan = []; A.raios = []; A.cort = [];
+    for (let l = 0; l < D_.mandala; l++) { const n = no(g, G.chao, l % 2 ? c2 : c1, [0, 0.12 + l * 0.03, 0], [(4.6 + l * 1.9) * esc / 2.2, 1, (4.6 + l * 1.9) * esc / 2.2], 0.16); A.mand.push(n); const rr = no(g, G.chao, c3, [0, 0.11 + l * 0.03, 0], [(4 + l * 1.9) * esc / 2.2, 1, (4 + l * 1.9) * esc / 2.2], 0.1); rr.r = [0, Math.PI / 4, 0]; A.mand.push(rr); }
+    for (let f = 0; f < D_.tornado; f++) for (let q = 0; q < 8; q++) A.tor.push({ n: no(g, G.caixa, q % 2 ? c1 : c3, [0, 0, 0], [0.18, 0.5, 0.18], 0.75), f, q });
+    for (let q = 0; q < D_.dragao; q++) A.drag.push(no(g, q === 0 ? G.octa : G.caixa, q === 0 ? c3 : q % 3 ? c1 : c2, [0, 0, 0], q === 0 ? [0.55, 0.45, 0.8] : [0.36 - q * 0.012, 0.36 - q * 0.012, 0.36 - q * 0.012], 0.9));
+    for (let q = 0; q < D_.planetas; q++) { const pl = no(g, G.octa, q % 2 ? c3 : c1, [0, 0, 0], [0.6, 0.6, 0.6], 0.95), an = no(g, G.chao, c2, [0, 0, 0], [1.6, 1, 1.6], 0.4); A.plan.push({ pl, an, q }); }
+    for (let q = 0; q < D_.raios; q++) A.raios.push(no(g, G.caixa, '#ffffff', [0, 0, 0], [0.08, 4, 0.08], 0));
+    for (let q = 0; q < D_.cortina; q++) A.cort.push(no(g, G.caixa, q % 2 ? c1 : c3, [0, 0, 0], [0.9, 5, 0.05], 0.18));
+    if (D_.coroaG) { A.coroaG = g.add(new No(null, null, [0, 4.6, 0])); for (let q = 0; q < 10; q++) { const a = (q / 10) * TAU; no(A.coroaG, G.pir, q % 2 ? c3 : c1, [Math.cos(a) * 0.8, 0, Math.sin(a) * 0.8], [0.16, 0.7 + (q % 2) * 0.4, 0.16], 0.9); } }
+    A.tExp = 0;
+  }
   AURA = A;
 }
 function atualizarAura(dt) {
@@ -3243,6 +3404,20 @@ function atualizarAura(dt) {
   if (A.halo) A.halo.r[1] += dt; if (A.coroa) A.coroa.r[1] -= dt * 0.6; if (A.pilar) A.pilar.a = 0.08 + Math.sin(t * 2) * 0.05;
   if (D_.arco) { const c = hslC((t * 60) % 360), c2 = hslC((t * 60 + 120) % 360); A.nos.forEach((n, i) => (n.cor = i % 2 ? c : c2)); }
   if (Math.random() < dt * D_.part) { const a = Math.random() * TAU; particula(J.x + Math.cos(a) * 0.9 * e, J.y + 0.3, J.z + Math.sin(a) * 0.9 * e, Math.random() < 0.5 ? D_.c1 : D_.c2, 1, 1.2, 0.12 * e, 0.8, -2); }
+  if (D_.mons) {
+    const c3 = D_.c3;
+    A.mand.forEach((n, q) => { n.r[1] += dt * (q % 2 ? -0.5 : 0.35) * (1 + q * 0.2); n.a = (q % 2 ? 0.08 : 0.14) + Math.sin(t * 2.4 + q) * 0.05; });
+    A.tor.forEach((o) => { const nT = D_.tornado, f = ((t * 0.5 + o.q / 8) % 1), a = f * TAU * 3 + (o.f / nT) * TAU + t * 2.5, rr = (0.9 + f * 1.6) * e / 2.2; o.n.p = [Math.cos(a) * rr, f * 5.5 * e / 2.2, Math.sin(a) * rr]; o.n.r = [0, -a, 0.6]; o.n.a = 0.85 * Math.sin(f * Math.PI); });
+    A.drag.forEach((n, q) => { const a = t * 1.3 - q * 0.22, rr = 2.6 * e / 2.2, y = 2.2 + Math.sin(t * 2 - q * 0.35) * 0.9; n.p = [Math.cos(a) * rr, y * e / 2.2, Math.sin(a) * rr]; n.r = [0, -a, 0]; });
+    A.plan.forEach((o) => { const a = t * (0.6 + o.q * 0.25) + o.q * 2.1, rr = (3 + o.q * 0.7) * e / 2.2, y = 1.6 + o.q * 0.8; o.pl.p = [Math.cos(a) * rr, y, Math.sin(a) * rr]; o.pl.r[1] += dt * 2; o.an.p = o.pl.p.slice(); o.an.r = [0.5, t, 0]; });
+    A.raios.forEach((n) => { if (Math.random() < dt * 4) { const a = Math.random() * TAU, rr = (1.5 + Math.random() * 2) * e / 2.2; n.p = [Math.cos(a) * rr, 2.5, Math.sin(a) * rr]; n.r = [0, 0, (Math.random() - 0.5) * 0.6]; n.a = 0.95; n.cor = hex(Math.random() < 0.5 ? '#ffffff' : D_.c1); } else n.a = Math.max(0, n.a - dt * 6); });
+    A.cort.forEach((n, q) => { const a = Math.PI + (q - (A.cort.length - 1) / 2) * 0.32 + J.rot, rr = 2.4 * e / 2.2; n.p = [Math.sin(a) * rr, 3.2 + Math.sin(t * 1.5 + q) * 0.3, Math.cos(a) * rr]; n.r = [0, a, Math.sin(t + q) * 0.12]; n.a = 0.12 + Math.sin(t * 2 + q * 0.8) * 0.07; });
+    if (A.coroaG) { A.coroaG.r[1] += dt * 0.9; A.coroaG.p[1] = 4.6 + Math.sin(t * 2) * 0.15; }
+    // faíscas que sobem, brasas que caem e uma onda de energia de tempos em tempos
+    if (Math.random() < dt * D_.part * 0.6) { const a = Math.random() * TAU, rr = Math.random() * 2.4 * e / 2.2; particula(J.x + Math.cos(a) * rr, J.y + 0.2, J.z + Math.sin(a) * rr, Math.random() < 0.33 ? c3 : Math.random() < 0.5 ? D_.c1 : D_.c2, 1, 3, 0.16, 1.4, -9); }
+    if (Math.random() < dt * 5) particula(J.x + (Math.random() - 0.5) * 3, J.y + 5, J.z + (Math.random() - 0.5) * 3, D_.c2, 1, 1, 0.12, 1.2, 2);
+    if ((A.tExp -= dt) <= 0 && J.vivo) { A.tExp = D_.explosao; fxAnel(J.x, J.z, 0.5, 4.5 * e / 2.2, Math.random() < 0.5 ? D_.c1 : c3, 0.55, 0.3); }
+  }
   if (D_.bolhas && Math.random() < dt * 3) { const a = Math.random() * TAU; particula(J.x + Math.cos(a) * 1.2, J.y + 0.5, J.z + Math.sin(a) * 1.2, '#bfe8ff', 1, 0.6, 0.22, 1.4, -6); }
 }
 // ---------------- clima: eventos que mudam o jogo (podem vir dois ao mesmo tempo) ----------------
@@ -3298,18 +3473,54 @@ function atualizarMira(dt) {
 function usarMundial() {
   if (S.mundial === null || S.mundial === undefined || !J.vivo) { aviso('Você não tem um item mundial. Forje um no Castelo Antigo de Avalan.', 2.4); return; }
   const falta = cdMundialResta(); if (falta > 0) { aviso(MUNDIAIS[S.mundial].nome + ' está recarregando: ' + mmssM(falta), 1.8); return; }
-  const W = MUNDIAIS[S.mundial], P = D.max(E.espada, E.magia).mul(70), cor = W.cor, cor2 = '#ffffff', x0 = J.x, z0 = J.z, R0 = 45;
-  S.cdMundial = Date.now() + CD_MUNDIAL * 1000; sujo = true; est().mundiais++; som('arcanjo'); banner(W.nome, 'Todos os ataques de chefes e monstros param por 1 minuto');
+  const W = MUNDIAIS[S.mundial], cor = W.cor, x0 = J.x, z0 = J.z;
+  S.cdMundial = Date.now() + CD_MUNDIAL * 1000; sujo = true; est().mundiais++; som('arcanjo');
+  banner(W.nome, W.d2 + ' · 90 s · ninguém consegue atacar por 1 min');
   // cancela tudo: projéteis, áreas de aviso e ondas dos inimigos
   for (let i = projs.length - 1; i >= 0; i--) if (!projs[i].meu) { tirar(projs[i].no); projs.splice(i, 1); }
   for (const a of avisos) tirar(a.no); avisos.length = 0; ONDAS.length = 0;
-  for (const m of mobs) if (Math.hypot(m.x - x0, m.z - z0) < 70) { m.paz = agoraS() + 60; m.wind = 0; m.dash = 0; }
-  // efeito visual por item
-  fxPilar(x0, z0, 6, 80, cor, cor2, 2.5); for (let k = 0; k < 4; k++) depois(k * 0.3, () => fxAnel(x0, z0, 2, R0, k % 2 ? cor2 : cor, 0.9, 1 + k));
-  if (W.k === 'coroa') fxQueda(x0, z0, G.octa, '#ffb020', '#fff6d8', [12, 12, 12], 1.4, () => fxAnel(x0, z0, 2, R0, '#ff6a1a', 1));
-  for (let i = 0; i < 18; i++) depois(0.1 + i * 0.08, () => { const a = Math.random() * TAU, r = Math.random() * R0, x = x0 + Math.cos(a) * r, z = z0 + Math.sin(a) * r;
-    if (W.k === 'martelo') fxRaio([x, chao(x, z) + 40, z], [x, chao(x, z), z], cor, cor2, 0.4); else if (W.k === 'asa') fxQueda(x, z, G.pir, cor, cor2, [0.6, 3, 0.2], 0.6, null, true); else if (W.k === 'calice') fxAnel(x, z, 0.5, 6, cor, 0.5); else fxPilar(x, z, 1.4, 18, cor, cor2, 0.6); });
-  depois(1.2, () => { for (const m of mobs.slice()) if (Math.hypot(m.x - x0, m.z - z0) < R0 + m.esp.raio * m.tam) causarDano(m, P, { magia: true, el: W.el, anti: true, dx: m.x - x0, dz: m.z - z0, critico: false }); });
+  fxPilar(x0, z0, 3, 160, cor, '#ffffff', 2.2); for (let k = 0; k < 6; k++) depois(k * 0.25, () => fxAnel(x0, z0, 2, 30 + k * 14, k % 2 ? '#ffffff' : cor, 1, 1 + k));
+  iniciarPoderMundial(W);
+}
+// ---------------- poder mundial: 90 segundos de efeito grandioso, seguindo o jogador ----------------
+let PW = null;
+const DUR_PW = 90;
+function iniciarPoderMundial(W) {
+  if (PW) acabarPoderMundial();
+  const nos = [], g = raiz.add(new No()); nos.push(g);
+  const add = (geo, cor, p, s, a) => { const n = g.add(new No(geo, cor, p, s)); n.unlit = 1; n.a = a; n.semFog = true; return n; };
+  const v = { anel: add(G.chao, W.cor, [0, 0.4, 0], [180, 1, 180], 0.1) };
+  if (W.k === 'coroa') { v.sol = add(G.octa, '#fff2b0', [0, 60, 0], [22, 22, 22], 0.95); v.halo = add(G.octa, '#ffb020', [0, 60, 0], [34, 34, 34], 0.25); }
+  if (W.k === 'martelo') { v.nuvem = add(G.caixa, '#3a4a6a', [0, 55, 0], [160, 6, 160], 0.55); }
+  if (W.k === 'grimorio') { v.paginas = []; for (let i = 0; i < 10; i++) v.paginas.push(add(G.caixa, i % 2 ? '#ff60e0' : '#ffe0ff', [0, 0, 0], [3, 4, 0.2], 0.8)); v.runa = add(G.chao, '#ff60e0', [0, 0.5, 0], [60, 1, 60], 0.3); }
+  if (W.k === 'calice') { v.agua = add(G.chao, '#3ab0ff', [0, 0.6, 0], [10, 1, 10], 0.35); }
+  if (W.k === 'olho') { v.olho = add(G.octa, '#ffffff', [0, 70, 0], [40, 18, 6], 0.9); v.iris = add(G.octa, '#8a5aff', [0, 70, 2.5], [16, 16, 4], 1); v.pupila = add(G.octa, '#000000', [0, 70, 4], [6, 6, 2], 1); }
+  if (W.k === 'asa') { v.asas = [-1, 1].map((l) => { const a = J.modelo.corpo.add(new No(null, null, [l * 0.35, 2.3, -0.5])); for (let q = 0; q < 4; q++) { const f = a.add(new No(G.caixa, q % 2 ? '#ffffff' : '#fff3a0', [l * (1.1 + q * 0.4), 0.3 - q * 0.25, 0], [2.2 - q * 0.3, 0.22, 0.05])); f.r = [0, 0, l * (0.5 - q * 0.25)]; f.unlit = 1; f.a = 0.85; } return a; }); }
+  PW = { W, fim: agoraS() + DUR_PW, paz: agoraS() + 60, g, v, t: 0, tick: 0 };
+  if (W.k === 'grimorio') buff('wGrimorio', 1, DUR_PW);
+  if (W.k === 'coroa') buff('wCoroa', 1, DUR_PW);
+  if (W.k === 'martelo') buff('wMartelo', 1, DUR_PW);
+  if (W.k === 'asa') buff('wAsa', 1, DUR_PW);
+  if (W.k === 'calice') buff('wCalice', 1, DUR_PW);
+  if (W.k === 'olho') buff('wOlho', 1, DUR_PW);
+  if (ONLINE.estado === 'on') enviar({ t: 'fx', h: 'mundialItem:' + W.k, x: +J.x.toFixed(1), z: +J.z.toFixed(1), r: 0 });
+}
+function acabarPoderMundial() { if (!PW) return; for (const k of ['wCoroa', 'wMartelo', 'wGrimorio', 'wCalice', 'wOlho', 'wAsa']) delete BUFF[k]; tirar(PW.g); if (PW.v.asas) for (const a of PW.v.asas) tirar(a); PW = null; }
+function tickPoderMundial(dt) {
+  if (!PW) return; const t = agoraS(), W = PW.W, v = PW.v, P = D.max(E.espada, E.magia).mul(70);
+  if (t > PW.fim || !J.vivo) { banner(W.nome, 'O poder mundial se acalmou'); acabarPoderMundial(); return; }
+  PW.t += dt; PW.g.p = [J.x, J.y, J.z]; v.anel.r[1] += dt * 0.4; v.anel.a = 0.08 + Math.sin(PW.t * 2) * 0.04;
+  // ninguém ataca no primeiro minuto
+  if (t < PW.paz) for (const m of mobs) if (Math.hypot(m.x - J.x, m.z - J.z) < 100) { m.paz = Math.max(m.paz || 0, t + 0.3); m.wind = 0; m.dash = 0; }
+  const perto = (R) => mobs.filter((m) => Math.hypot(m.x - J.x, m.z - J.z) < R);
+  const bater = (m, mult, el) => causarDano(m, P.mul(mult || 1), { magia: true, el: el || W.el, anti: true, critico: false, dx: m.x - J.x, dz: m.z - J.z });
+  PW.tick -= dt;
+  if (W.k === 'coroa') { v.sol.r[1] += dt; v.halo.a = 0.2 + Math.sin(PW.t * 4) * 0.08; if (PW.tick <= 0) { PW.tick = 1; for (const m of perto(90)) { bater(m); if (Math.random() < 0.4) fxPilar(m.x, m.z, 1.2, 14, '#ff7a1a', '#ffd84a', 0.4); } } }
+  else if (W.k === 'martelo') { if (PW.tick <= 0) { PW.tick = 0.22; const l = perto(100); for (let i = 0; i < 3 && l.length; i++) { const m = l[Math.floor(Math.random() * l.length)]; fxRaio([m.x, J.y + 55, m.z], [m.x, m.y + 1, m.z], '#7ae0ff', '#ffffff', 0.3); bater(m, 0.6); if (!m.st) m.st = {}; m.st.atordoar = { fim: t + 1.5 }; } } }
+  else if (W.k === 'grimorio') { v.runa.r[1] += dt * 0.6; v.paginas.forEach((pg, i) => { const a = PW.t * 1.2 + (i / 10) * TAU; pg.p = [Math.cos(a) * 6, 3 + Math.sin(PW.t * 2 + i) * 1.2, Math.sin(a) * 6]; pg.r = [0, -a, 0.3]; }); if (PW.tick <= 0) { PW.tick = 1; for (const m of perto(90)) { const p = m.chefe ? (m.chefe.tipo === 'normal' ? 0.012 : 0.005) : m.arc || m.maldito !== undefined ? 0.008 : 0.05; causarDano(m, m.hpMax.mul(p), { dot: true }); particula(m.x, m.y + 2, m.z, '#ff60e0', 3, 3, 0.2, 0.6, 2); } } }
+  else if (W.k === 'calice') { const f = (PW.t % 4) / 4; v.agua.s = [10 + f * 170, 1, 10 + f * 170]; v.agua.a = 0.4 * (1 - f); if (PW.tick <= 0) { PW.tick = 4; fxAnel(J.x, J.z, 2, 85, '#3ab0ff', 1.4, 1.2); for (const m of perto(85)) { bater(m, 2); m.kb = [Math.sign(m.x - J.x) * 8, Math.sign(m.z - J.z) * 8]; } } J.hp = D.min(E.vidaMax, J.hp.add(E.vidaMax.mul(0.05 * dt))); }
+  else if (W.k === 'olho') { v.olho.r[1] = Math.atan2(J.x - (J.x), 1); v.iris.p[0] = Math.sin(PW.t) * 6; v.pupila.p[0] = v.iris.p[0]; for (const m of perto(100)) { m.vulnZ = Math.max(m.vulnZ || 0, 4); if (!m.st) m.st = {}; m.st.lento = { fim: t + 0.3, v: 0.8 }; } if (PW.tick <= 0) { PW.tick = 1.5; for (const m of perto(100)) { fxRaio([J.x, J.y + 70, J.z], [m.x, m.y + 1, m.z], '#8a5aff', '#000000', 0.25); bater(m, 0.5, 'sombra'); } } }
+  else if (W.k === 'asa') { J.invul = Math.max(J.invul, 0.2); if (J.vy < -4) J.vy = -4; if (PW.tick <= 0) { PW.tick = 0.4; const l = perto(90); for (let i = 0; i < 4 && l.length; i++) { const m = l[Math.floor(Math.random() * l.length)]; fxQueda(m.x, m.z, G.pir, '#fff3a0', '#ffffff', [0.5, 3, 0.2], 0.5, null, true); bater(m, 0.7, 'luz'); } } }
 }
 // itens mundiais não quebram: cada um só pode ser forjado UMA vez na vida, e depois recarrega
 const CD_MUNDIAL = 300;
@@ -3338,7 +3549,7 @@ function teleportar(x, z, nome, y) {
   J.x = x; J.z = z; J.y = y !== undefined ? y : chao(x, z) + 1; J.vy = 0; J.invul = 2; soltarMira(); fecharPainel(); fecharRoda();
   depois(0.05, () => { fxPilar(J.x, J.z, 1.5, 30, '#5affd8', '#ffffff', 0.8); fxAnel(J.x, J.z, 0.5, 8, '#5affd8', 0.5); }); toast('Teleporte: ' + nome, '#5affd8'); som('hab');
 }
-function tickJogo(dt) { tickMagiaMundial(dt); tickIlhas(dt); if (J.modelo) { const sc = bv('hmTita') ? 2 : 1; J.modelo.raiz.s = [sc, sc, sc]; if (J.modelo.marcaRunas) J.modelo.marcaRunas.r[1] += dt * 1.5; if (J.modelo.marcaCoroa) J.modelo.marcaCoroa.r[1] -= dt; } est().tempo += dt; if (J.vivo && J.ultX !== undefined) est().distancia += Math.min(80 * dt, Math.hypot(J.x - J.ultX, J.z - J.ultZ)); J.ultX = J.x; J.ultZ = J.z; tickCombate(dt); atualizarClima(dt); atualizarMira(dt); atualizarAura(dt); atualizarEu(); atualizarOndas(dt); cristalForja.r[1] += dt * 0.6; }
+function tickJogo(dt) { tickCeu(dt); tickPoderMundial(dt); tickMagiaMundial(dt); tickIlhas(dt); if (J.modelo) { const sc = bv('hmTita') ? 2 : 1; J.modelo.raiz.s = [sc, sc, sc]; if (J.modelo.marcaRunas) J.modelo.marcaRunas.r[1] += dt * 1.5; if (J.modelo.marcaCoroa) J.modelo.marcaCoroa.r[1] -= dt; } est().tempo += dt; if (J.vivo && J.ultX !== undefined) est().distancia += Math.min(80 * dt, Math.hypot(J.x - J.ultX, J.z - J.ultZ)); J.ultX = J.x; J.ultZ = J.z; tickCombate(dt); atualizarClima(dt); atualizarMira(dt); atualizarAura(dt); atualizarEu(); atualizarOndas(dt); cristalForja.r[1] += dt * 0.6; }
 
 function hslC(h) { const f = (n) => { const k = (n + h / 30) % 12; return 0.5 - 0.5 * Math.max(-1, Math.min(k - 3, 9 - k, 1)); }; return [f(0), f(8), f(4)]; }
 // =====================================================================
@@ -3428,7 +3639,7 @@ function alvoInteracao() {
   for (const I of ILHAS) if (Math.hypot(J.x - I.portal.x, J.z - I.portal.z) < 5 && Math.abs(J.y - I.topo) < 3) return { nome: (portalAberto(I.j) ? 'Entrar no portal: ' : 'Portal selado: ') + BIOMAS[REINOS[I.j].bi].nome, curto: 'Portal', acao: () => entrarPortal(I.j) };
   for (const R_ of REINOS) if (Math.hypot(J.x - R_.volta.x, J.z - R_.volta.z) < 6) return { nome: 'Voltar para a ilha voadora', curto: 'Voltar', acao: () => sairReino(R_.j) };
   if (Math.hypot(J.x - SANTUARIO.x, J.z - SANTUARIO.z) < 9) return { nome: 'Santuário das Marcas', curto: 'Marcas', acao: abrirSantuario };
-  return null;
+  return alvoCeu();
 }
 // =====================================================================
 //  SANTUÁRIO DAS MARCAS · sacrifique o Anel da Ressurreição para invocar
@@ -3665,6 +3876,145 @@ function atualizarPainelOnline() {
 }
 // enquanto conecta, o painel mostra os segundos passando
 setInterval(() => { if (ONLINE.estado === 'conectando' && painelAberto === 'online') { const el = $('#onMsg'); if (el) el.textContent = ONLINE.msg + ' (' + Math.round((performance.now() - tConexao) / 1000) + ' s)'; } }, 1000);
+// =====================================================================
+//  MUNDO CELESTIAL · portal na praça, Praça Celestial, pontes seladas,
+//  a cena de entrada (sol azul + 4 arcanjos + pilar de luz) e o Feiticeiro
+// =====================================================================
+const PORTAL_CEU = { x: 67, z: 39 };                       // na Praça do Prisma
+const CEU_PTS = { volta: { x: CEUL.hx - 42, z: CEUL.hz }, pedra: { x: CEUL.hx, z: CEUL.hz + 40 }, chegada: { x: CEUL.hx + 12, z: CEUL.hz } };
+const FEITICEIROS = [{ x: 0, z: 78 }, { x: CEUL.hx, z: CEUL.hz - 40 }];
+const pontoPraca = () => (naCeu() ? [CEU_PTS.chegada.x, CEU_PTS.chegada.z, 9] : [0, 6, 3]);
+// ---------------- portais (anel de pé, véu azul) ----------------
+function montarPortal(x, z, y, cor, rotY) {
+  const g = raiz.add(new No(null, null, [x, y, z])); g.r = [0, rotY || 0, 0];
+  for (let k = 0; k < 20; k++) { const an = (k / 20) * TAU, b = g.add(new No(G.caixa, k % 2 ? '#fff6d8' : '#ffd84a', [0, 5 + Math.sin(an) * 4.4, Math.cos(an) * 4.4], [1.1, 1.1, 1.1])); if (!(k % 2)) b.emis = [0.4, 0.32, 0.05]; }
+  const veu = g.add(new No(G.octa, cor, [0, 5, 0], [0.5, 8.2, 8.2])); veu.unlit = 1; veu.a = 0.6;
+  const brilho = g.add(new No(G.octa, '#ffffff', [0, 5, 0], [0.3, 3, 3])); brilho.unlit = 1; brilho.a = 0.75;
+  const base = g.add(new No(G.caixa, '#f4f0ff', [0, 0.2, 0], [3, 0.4, 10])); return { g, veu, brilho, base };
+}
+const P_CEU = montarPortal(PORTAL_CEU.x, PORTAL_CEU.z, 2, '#7ad8ff', Math.atan2(PORTAL_CEU.x, PORTAL_CEU.z) + Math.PI / 2);
+const P_VOLTA = montarPortal(CEU_PTS.volta.x, CEU_PTS.volta.z, 8, '#ffe9a0', 0);
+// pedra de viagem da Praça Celestial
+const PEDRA = (() => { const g = raiz.add(new No(null, null, [CEU_PTS.pedra.x, 8, CEU_PTS.pedra.z])); g.add(new No(G.caixa, '#d8d0f0', [0, 0.4, 0], [4, 0.8, 4])); const c = g.add(new No(G.octa, '#7ad8ff', [0, 3.2, 0], [1.6, 3.6, 1.6])); c.emis = [0.2, 0.5, 0.7]; return { g, c }; })();
+// barreiras das pontes seladas (abrem quando o chefe da ilha anterior cai)
+const BARREIRAS = PONTES_CEU.map((p) => { const horiz = Math.abs(p.z1 - p.z0) < 1, t = 0.06, x = p.x0 + (p.x1 - p.x0) * t, z = p.z0 + (p.z1 - p.z0) * t; const n = raiz.add(new No(G.caixa, '#ff9ae0', [x, 12, z], horiz ? [0.6, 9, 13] : [13, 9, 0.6])); n.unlit = 1; n.a = 0.35; return n; });
+// ---------------- feiticeiro ----------------
+function montarFeiticeiro(x, z, y) {
+  const g = raiz.add(new No(null, null, [x, y, z])), corpo = g.add(new No());
+  const roxo = '#4a2a8a', roxo2 = '#6a3ab8', ouro = '#ffd84a', pele = '#f0c8a0';
+  corpo.add(new No(G.caixa, roxo, [0, 1.1, 0], [1.5, 2.2, 1.1])); corpo.add(new No(G.caixa, roxo2, [0, 2.4, 0], [1.2, 0.9, 0.85]));
+  for (let i = 0; i < 6; i++) corpo.add(new No(G.caixa, ouro, [0, 0.2 + i * 0.38, 0.56], [0.12, 0.12, 0.04]));
+  corpo.add(new No(G.caixa, ouro, [0, 0.12, 0], [1.6, 0.18, 1.2]));
+  const cab = corpo.add(new No(null, null, [0, 3.2, 0])); cab.add(new No(G.caixa, pele, [0, 0, 0], [0.8, 0.8, 0.8]));
+  cab.add(new No(G.caixa, '#ffffff', [0, -0.45, 0.32], [0.62, 0.9, 0.22])); cab.add(new No(G.caixa, '#ffffff', [0, -0.1, 0.41], [0.5, 0.12, 0.04]));
+  for (const s of [-1, 1]) { const o = cab.add(new No(G.caixa, '#7ad8ff', [s * 0.18, 0.08, 0.41], [0.12, 0.1, 0.02])); o.emis = [0.3, 0.7, 1]; }
+  cab.add(new No(G.caixa, roxo, [0, 0.45, 0], [1.4, 0.14, 1.4])); const ch = cab.add(new No(G.pir, roxo2, [0, 0.52, 0], [0.75, 1.9, 0.75])); ch.r = [0.12, 0, 0.08];
+  const est = cab.add(new No(G.octa, ouro, [0.12, 1.6, -0.1], [0.28, 0.28, 0.28])); est.emis = [0.6, 0.5, 0.1];
+  const braco = corpo.add(new No(null, null, [0.85, 2.6, 0])); braco.add(new No(G.caixa, roxo2, [0, -0.45, 0], [0.4, 0.9, 0.45]));
+  braco.add(new No(G.caixa, '#6a4a2a', [0.05, -0.2, 0.25], [0.12, 4, 0.12])); const orbe = braco.add(new No(G.octa, '#c060ff', [0.05, 1.95, 0.25], [0.5, 0.6, 0.5])); orbe.emis = [0.5, 0.2, 0.8];
+  const runas = g.add(new No(null, null, [0, 2, 0])); for (let i = 0; i < 8; i++) { const a = (i / 8) * TAU, r = runas.add(new No(G.caixa, i % 2 ? '#c060ff' : '#7ad8ff', [Math.cos(a) * 1.8, 0, Math.sin(a) * 1.8], [0.08, 0.36, 0.2])); r.unlit = 1; r.a = 0.8; r.r = [0, -a, 0]; }
+  return { g, corpo, orbe, runas, x, z };
+}
+const FEIT_NOS = FEITICEIROS.map((f, i) => montarFeiticeiro(f.x, f.z, i ? 8 : 2));
+// ---------------- interações ----------------
+function requisitosCeu() { const arc = vitoriasArc().filter((v) => v > 0).length, def = S.selos ? Object.keys(S.selos).length : 0; return { arc, def, ok: arc >= 4 && def >= 7 }; }
+function irCeu(semFx) { J.x = CEU_PTS.chegada.x; J.z = CEU_PTS.chegada.z; J.y = 9.5; J.vy = 0; J.invul = 2.5; soltarMira(); estaNoCeu = true; recalc(); J.hp = E.vidaMax; if (!semFx) { fxPilar(J.x, J.z, 3, 60, '#bfe8ff', '#ffffff', 1.2); banner('Praça Celestial', 'Ilha ' + Math.min(N_CEU, nivelCeu() + 1) + ' liberada · fale com o Feiticeiro ou use a Pedra de Viagem'); } }
+function sairCeu() { J.x = PORTAL_CEU.x - 8; J.z = PORTAL_CEU.z - 4; J.y = 3; J.vy = 0; J.invul = 2; soltarMira(); estaNoCeu = false; recalc(); fxPilar(J.x, J.z, 2, 30, '#ffe9a0', '#ffffff', 0.8); banner('Praça do Prisma', 'De volta ao mundo'); }
+function alvoCeu() {
+  for (const f of FEIT_NOS) if (Math.hypot(J.x - f.x, J.z - f.z) < 6) return { nome: 'Falar com o Feiticeiro', curto: 'Feiticeiro', acao: () => abrirFeiticeiro() };
+  if (Math.hypot(J.x - PORTAL_CEU.x, J.z - PORTAL_CEU.z) < 7) { const r = requisitosCeu(); return { nome: S.ceuAberto ? 'Portal Celestial: subir ao céu' : `Portal Celestial selado (arcanjos ${r.arc}/4 · definitivos ${r.def}/7)`, curto: 'Céu', acao: () => (S.ceuAberto ? irCeu() : aviso('Derrote os 4 arcanjos e os 7 chefes definitivos para abrir o céu.', 3)) }; }
+  if (naCeu() && Math.hypot(J.x - CEU_PTS.volta.x, J.z - CEU_PTS.volta.z) < 7) return { nome: 'Voltar para a Praça do Prisma', curto: 'Voltar', acao: sairCeu };
+  if (naCeu() && Math.hypot(J.x - CEU_PTS.pedra.x, J.z - CEU_PTS.pedra.z) < 6) return { nome: 'Pedra de Viagem Celestial', curto: 'Viajar', acao: abrirViagemCeu };
+  return null;
+}
+function abrirViagemCeu() {
+  painelAberto = 'viagemCeu'; modal.hidden = false; painel.className = 'painel largo'; const L = nivelCeu();
+  painel.innerHTML = `<div class="cab"><h3>Pedra de Viagem Celestial</h3><button class="fechar" id="fx" aria-label="Fechar">×</button></div>
+    <p class="sub">Leva você ao começo de qualquer ilha já liberada. Uma ilha nova abre quando o chefe da ilha anterior cai. Poder Celestial atual: <b>${fmt(multCeu())}x</b> no seu dano e na sua vida dentro do céu.</p>
+    <div class="ceuGrade">${Array.from({ length: N_CEU }, (_, a) => { const B = BIOMAS[CEU_B0 + a], ok = a <= L, v = S.ceuVencidos && S.ceuVencidos[a]; return `<button class="ceuIlha ${v ? 'venc' : ''}" data-ir="${a}" ${ok ? '' : 'disabled'} style="--c:${B.cor}"><b>${a + 1}</b><span>${escH(B.nome)}</span></button>`; }).join('')}</div>`;
+  $('#fx').onclick = fecharPainel;
+  painel.querySelectorAll('[data-ir]').forEach((b) => (b.onclick = () => { const a = +b.dataset.ir, c = centroCeu(a), p = a ? PONTES_CEU[a] : PONTES_CEU[0]; fecharPainel(); J.x = c.x; J.z = c.z - 60; J.y = chao(J.x, J.z) + 1; J.vy = 0; J.invul = 2; soltarMira(); fxPilar(J.x, J.z, 2, 30, '#bfe8ff', '#fff', 0.8); }));
+}
+// ---------------- cena de entrada: o sol fica azul, os 4 arcanjos descem e um pilar de luz leva o jogador ----------------
+const CINE = { ativo: false, t: 0, azul: 0, arcs: [], cx: 0, cz: 0, cy: 0 };
+let flashEl = null;
+function iniciarCine() {
+  CINE.ativo = true; CINE.t = 0; CINE.cx = J.x; CINE.cz = J.z; CINE.cy = J.y; painelAberto = 'cine'; J.invul = 30; J.mov = null; som('arcanjo');
+  for (const m of mobs.slice()) if (!m.chefe && Math.hypot(m.x - J.x, m.z - J.z) < 60) removerMob(m);
+  banner('O Sol ficou azul', 'Os quatro arcanjos reconhecem a sua força');
+  if (!flashEl) { flashEl = document.createElement('div'); flashEl.id = 'flashCeu'; document.body.appendChild(flashEl); }
+  ARCANJOS.forEach((A, i) => { const esp = { i: -1, k: 'arcCine' + i, nome: A.nome, arq: 'arcanjo', cor: A.cor, cor2: '#ffffff', x: {}, hp: 1, dano: 1, vel: 0, alc: 0, pts: 0, raio: 1.3, aggro: 0, voa: 1, tam: 1.7, forma: 2 };
+    const P = montarMob(esp, true, null); P.raiz.s = [1.7, 1.7, 1.7]; raiz.add(P.raiz); const a = (i / 4) * TAU + Math.PI / 4; CINE.arcs.push({ P, a, i }); P.raiz.p = [J.x + Math.cos(a) * 8, J.y + 80, J.z + Math.sin(a) * 8]; });
+}
+function tickCine(dt) {
+  if (!CINE.ativo) { CINE.azul = Math.max(0, CINE.azul - dt * 0.3); return; }
+  const t = (CINE.t += dt); J.x = CINE.cx; J.z = CINE.cz; J.vy = 0; J.y = Math.max(J.y, chao(J.x, J.z)); cam.alvoDist = 18; cam.pitch = clamp(cam.pitch, 0.1, 0.35);
+  CINE.azul = Math.min(1, t / 2);
+  for (const A of CINE.arcs) { const d = clamp((t - 1.4 - A.i * 0.35) / 3.2, 0, 1), e = 1 - Math.pow(1 - d, 3); A.P.raiz.p = [CINE.cx + Math.cos(A.a) * 8, CINE.cy + 1.5 + (1 - e) * 80, CINE.cz + Math.sin(A.a) * 8]; A.P.raiz.r = [0, Math.atan2(CINE.cx - A.P.raiz.p[0], CINE.cz - A.P.raiz.p[2]), 0]; if (Math.random() < dt * 12) particula(A.P.raiz.p[0], A.P.raiz.p[1] + 3, A.P.raiz.p[2], ARCANJOS[A.i].cor, 1, 2, 0.25, 1, 2); if (d >= 1 && !A.pousou) { A.pousou = 1; fxAnel(A.P.raiz.p[0], A.P.raiz.p[2], 0.5, 6, ARCANJOS[A.i].cor, 0.5); som('hab'); } }
+  if (t > 5.6 && !CINE.pilar) { CINE.pilar = 1; banner('Um pilar de luz desce', 'O céu se abriu para você'); fxPilar(CINE.cx, CINE.cz, 7, 260, '#bfe8ff', '#ffffff', 2.4); for (let k = 0; k < 5; k++) depois(k * 0.2, () => fxAnel(CINE.cx, CINE.cz, 1, 10 + k * 6, k % 2 ? '#ffffff' : '#7ad8ff', 0.8)); som('arcanjo'); }
+  flashEl.style.opacity = t > 6.2 ? String(clamp((t - 6.2) / 0.8, 0, 1)) : '0';
+  if (t > 7.4) {
+    for (const A of CINE.arcs) tirar(A.P.raiz); CINE.arcs = []; CINE.ativo = false; CINE.pilar = 0; painelAberto = null; S.ceuAberto = true; sujo = true;
+    irCeu(true); J.invul = 3; banner('MUNDO CELESTIAL', '90 ilhas e 90 chefes · cada chefe vencido abre a próxima ponte e aumenta o seu Poder Celestial');
+    let k = 1; const some = () => { k -= 0.04; flashEl.style.opacity = String(Math.max(0, k)); if (k > 0) requestAnimationFrame(some); }; some();
+  }
+}
+// ---------------- a cada quadro ----------------
+let tChecarCeu = 0, ultimaIlha = -1;
+function tickCeu(dt) {
+  const agoraNoCeu = J.x > 15000; if (agoraNoCeu !== estaNoCeu) { estaNoCeu = agoraNoCeu; recalc(); }
+  tickCine(dt);
+  const t = tempo; P_CEU.veu.r[0] += dt * 0.5; P_CEU.veu.a = S.ceuAberto ? 0.55 + Math.sin(t * 3) * 0.1 : 0.15; P_CEU.brilho.a = S.ceuAberto ? 0.75 : 0.15; P_VOLTA.veu.r[0] += dt * 0.5; PEDRA.c.r[1] += dt; PEDRA.c.p[1] = 3.2 + Math.sin(t * 1.5) * 0.3;
+  for (const f of FEIT_NOS) { f.runas.r[1] += dt * 0.8; f.orbe.r[1] += dt * 2; f.corpo.p[1] = Math.sin(t * 1.6) * 0.08; const d = Math.hypot(J.x - f.x, J.z - f.z); if (d < 20) f.g.r[1] = Math.atan2(J.x - f.x, J.z - f.z); }
+  if (estaNoCeu) {
+    BARREIRAS.forEach((n, i) => { n.vis = !ceuLiberado(PONTES_CEU[i].b); n.a = 0.25 + Math.sin(t * 3 + i) * 0.1; });
+    if (J.bioma >= CEU_B0) ultimaIlha = J.bioma - CEU_B0;
+    if (J.vivo) {
+      // ponte selada: empurra de volta
+      for (const p of PONTES_CEU) { if (ceuLiberado(p.b)) continue; const d = distSeg(J.x, J.z, p); if (d > 8) continue; const dx = p.x1 - p.x0, dz = p.z1 - p.z0, L2 = dx * dx + dz * dz, tt = ((J.x - p.x0) * dx + (J.z - p.z0) * dz) / L2; if (tt > 0.05 && tt < 1) { J.x = p.x0 + dx * 0.03; J.z = p.z0 + dz * 0.03; const ch = CHEFES.find((c) => c.tipo === 'ceu' && c.a === p.b - 1); aviso('Ponte selada: derrote ' + (ch ? ch.nome : 'o chefe') + ' desta ilha para abrir.', 2.2); } }
+      // caiu no vazio: volta para o começo da ilha
+      if (J.y < -18) { const a = Math.max(0, ultimaIlha), c = centroCeu(a); J.x = ultimaIlha < 0 ? CEU_PTS.chegada.x : c.x; J.z = ultimaIlha < 0 ? CEU_PTS.chegada.z : c.z - 60; J.y = chao(J.x, J.z) + 2; J.vy = 0; J.invul = 2; aviso('Você caiu das nuvens e voltou para a ilha.', 2); }
+    }
+  }
+  if ((tChecarCeu -= dt) <= 0) { tChecarCeu = 1; if (!S.ceuAberto && !CINE.ativo && J.vivo && !estaNoCeu && S.criado && requisitosCeu().ok) iniciarCine(); }
+}
+// chefe celestial vencido: abre a próxima ponte e aumenta o Poder Celestial
+function morteChefeCeu(c) {
+  if (!S.ceuVencidos) S.ceuVencidos = {}; const novo = !S.ceuVencidos[c.a]; S.ceuVencidos[c.a] = 1; sujo = true; recalc();
+  if (novo) depois(1.4, () => banner(c.a + 1 < N_CEU ? 'A ponte para a ilha ' + (c.a + 2) + ' abriu' : 'O CÉU FOI CONQUISTADO', 'Poder Celestial: ' + fmt(multCeu()) + 'x no dano e na vida'));
+}
+// ---------------- FEITICEIRO: troca efeitos e maldições pagando com cristais de qualquer região ----------------
+let feitSel = null, feitOfertas = null;
+const itensComEfeito = () => [...ARMADURA.map((k) => S.equip[k]), ...S.barra, ...S.inv].filter((it) => it && Array.isArray(it.ef) && it.tipo !== 'bau' && it.tipo !== 'pocao' && it.st);
+const cristaisTenho = () => MAT_BIO.map((m, b) => ({ id: m[1], q: S.mat[m[1]] || 0, b })).filter((c) => c.q > 0);
+const custoFeit = (it) => 1 + it.rar;
+function pagarCristais(n) { const id = S.cfg.cristalPag, tem = S.mat[id] || 0; if (tem < n) { aviso('Faltam cristais: escolha outro cristal ou junte mais.', 2.2); return false; } S.mat[id] = tem - n; sujo = true; return true; }
+function refazerPoder(it) { const P = poderItem(it.bi, it.rar, it.ef, it.tipo); it.st = {}; if (CORPO.includes(it.tipo)) it.st.espada = P; else if (it.tipo === 'cajado') it.st.magia = P; else it.st.vida = P.mul(6).floor(); recalc(); remontar(); desenharBarra(); }
+const efUm = (rar, t) => { const l = EF_LISTA[t]; return [l[Math.floor(Math.random() * l.length)].k, +((1 + rar * 0.22) * (0.75 + Math.random() * 0.5)).toFixed(3)]; };
+const descEf = ([k, v]) => { const e = EF[k]; if (!e) return { n: k, t: 'buff', txt: '' }; return { n: e.n, t: e.t, txt: Object.keys(e.st).map((s2) => EST_NOME[s2][0] + ' ' + EST_NOME[s2][1](e.st[s2] * v)).join(' · ') }; };
+const htmlEf = (ef) => { const d = descEf(ef); return `<span class="efN" style="color:${EF_TIPO[d.t].cor}">${escH(d.n)}</span><small>${EF_TIPO[d.t].nome} · ${escH(d.txt)}</small>`; };
+function abrirFeiticeiro() {
+  painelAberto = 'feiticeiro'; modal.hidden = false; painel.className = 'painel largo';
+  const lista = itensComEfeito(); if (!lista.includes(feitSel)) { feitSel = lista[0] || null; feitOfertas = null; }
+  const cr = cristaisTenho(); if (!cr.some((c) => c.id === S.cfg.cristalPag)) S.cfg.cristalPag = cr.length ? cr.slice().sort((a, b) => b.q - a.q)[0].id : null;
+  const it = feitSel, n = it ? custoFeit(it) : 0, temC = S.mat[S.cfg.cristalPag] || 0;
+  painel.innerHTML = `<div class="cab"><h3>Feiticeiro</h3><button class="fechar" id="fx" aria-label="Fechar">×</button></div>
+    <p class="sub">"Traga cristais de qualquer região e eu reescrevo os efeitos do seu item. Você escolhe o que fica." Girar um efeito mostra 4 opções (sempre uma bênção e um buff). O poder do item muda junto com os efeitos.</p>
+    <div class="feit"><div class="feitLista">${lista.length ? lista.map((q) => `<button class="slot ${q === it ? 'sel' : ''}" data-fs="${q.id}" data-tip="it:${q.id}" style="--c:${RAR[q.rar].cor}">${icone(q)}</button>`).join('') : '<p class="sub">Você não tem itens com efeitos.</p>'}</div>
+    ${it ? `<div class="feitItem"><b style="color:${RAR[it.rar].cor}">${escH(it.nome)}</b> <small>${RAR[it.rar].nome} · poder ${fmt(it.st.espada || it.st.magia || it.st.vida || 0)}</small>
+      <div class="sw" style="margin:8px 0"><label class="sub" for="fPag">Pagar com</label><select id="fPag" class="campo">${cr.map((c) => `<option value="${c.id}" ${c.id === S.cfg.cristalPag ? 'selected' : ''}>${escH(MATS[c.id].nome)} (${c.q})</option>`).join('') || '<option>Sem cristais</option>'}</select></div>
+      ${feitOfertas ? `<div class="ofertas"><p class="sub">${feitOfertas.tudo ? 'Escolha um conjunto novo de efeitos (ou mantenha o atual):' : 'Escolha o efeito que fica no lugar de <b>' + escH(descEf(it.ef[feitOfertas.slot]).n) + '</b>:'}</p>
+        ${feitOfertas.op.map((o, i) => `<button class="oferta" data-of="${i}">${feitOfertas.tudo ? o.map((e) => `<div>${htmlEf(e)}</div>`).join('') : htmlEf(o)}</button>`).join('')}<button class="oferta manter" data-of="-1">Manter como está</button></div>`
+      : `<div class="efs">${it.ef.map((e, i) => { const d = descEf(e); return `<div class="efL">${htmlEf(e)}<div class="sw"><button data-gira="${i}" ${temC >= n ? '' : 'disabled'}>Girar (${n})</button>${d.t === 'maldicao' ? `<button data-tira="${i}" ${temC >= n * 3 ? '' : 'disabled'}>Remover (${n * 3})</button>` : ''}</div></div>`; }).join('') || '<p class="sub">Sem efeitos.</p>'}</div>
+      <div class="bts" style="justify-content:flex-start"><button class="pri" id="fTudo" ${temC >= n * 4 && it.ef.length ? '' : 'disabled'}>Girar todos os efeitos (${n * 4} cristais)</button></div>`}</div>` : ''}</div>`;
+  $('#fx').onclick = fecharPainel;
+  painel.querySelectorAll('[data-fs]').forEach((b) => (b.onclick = () => { feitSel = lista.find((q) => q.id === +b.dataset.fs); feitOfertas = null; abrirFeiticeiro(); }));
+  const sp = $('#fPag'); if (sp) sp.onchange = () => { S.cfg.cristalPag = +sp.value; abrirFeiticeiro(); };
+  painel.querySelectorAll('[data-gira]').forEach((b) => (b.onclick = () => { if (!pagarCristais(n)) return; const t = ['bencao', 'buff']; feitOfertas = { slot: +b.dataset.gira, op: [efUm(it.rar, 'bencao'), efUm(it.rar, 'buff'), sortearEfeitos(it.rar, 1)[0], sortearEfeitos(it.rar, 1)[0]] }; som('hab'); abrirFeiticeiro(); }));
+  painel.querySelectorAll('[data-tira]').forEach((b) => (b.onclick = () => { if (!pagarCristais(n * 3)) return; it.ef.splice(+b.dataset.tira, 1); refazerPoder(it); toast('Maldição removida', '#7dffa8'); som('arcanjo'); abrirFeiticeiro(); }));
+  const bt = $('#fTudo'); if (bt) bt.onclick = () => { if (!pagarCristais(n * 4)) return; const q = it.ef.length; feitOfertas = { tudo: true, op: [sortearEfeitos(it.rar, q), sortearEfeitos(it.rar, q), sortearEfeitos(it.rar, q, true)] }; som('hab'); abrirFeiticeiro(); };
+  painel.querySelectorAll('[data-of]').forEach((b) => (b.onclick = () => { const i = +b.dataset.of; if (i >= 0) { if (feitOfertas.tudo) it.ef = feitOfertas.op[i]; else it.ef[feitOfertas.slot] = feitOfertas.op[i]; refazerPoder(it); toast('O Feiticeiro reescreveu o item', '#c060ff'); fxAnel(J.x, J.z, 0.5, 4, '#c060ff', 0.4); } feitOfertas = null; abrirFeiticeiro(); }));
+}
 // =====================================================================
 //  INVENTÁRIO, BARRA, BAÚS, RODA DE ANÉIS E DICAS
 // =====================================================================
@@ -4073,7 +4423,7 @@ function abrirForjaMundial() {
   const aneis = Object.keys(S.aneis).filter((k) => +k !== A_TELEPORTE && S.aneis[k] > 0), qtd = aneis.reduce((a, k) => a + S.aneis[k], 0), feitos = S.mundiaisFeitos || {}, meus = S.mundiaisTem || [], cdR = cdMundialResta();
   const ref = D.max(E.espada, E.magia);
   painel.innerHTML = `<div class="cab"><h3>Forja Mundial de Avalan</h3><button class="fechar" id="fx" aria-label="Fechar">×</button></div>
-    <p class="sub">Itens mundiais causam 70x o poder do seu item atual (hoje: <b>${fmt(ref.mul(70).floor())}</b>) numa área gigante e <b>cancelam todos os ataques</b> de chefes e monstros por 1 minuto. <b>Não quebram</b>: depois de usar, recarregam por 5 minutos. Mas cada um é <b>único</b>: só pode ser forjado uma vez. Só têm a habilidade (não dá para atacar com eles) e ficam na mão esquerda, um por vez: troque qual segurar aqui. Para forjar é preciso <b>sacrificar todos os seus anéis</b>, menos o de teleporte (mínimo 3). Você tem ${qtd} para sacrificar.</p>
+    <p class="sub">Itens mundiais liberam um <b>poder de 90 segundos</b> baseado em 70x o poder do seu item atual (hoje: <b>${fmt(ref.mul(70).floor())}</b>) e <b>cancelam todos os ataques</b> de chefes e monstros a 100 m durante o primeiro minuto. <b>Não quebram</b>: depois de usar, recarregam por 5 minutos. Mas cada um é <b>único</b>: só pode ser forjado uma vez. Só têm a habilidade (não dá para atacar com eles) e ficam na mão esquerda, um por vez: troque qual segurar aqui. Para forjar é preciso <b>sacrificar todos os seus anéis</b>, menos o de teleporte (mínimo 3). Você tem ${qtd} para sacrificar.</p>
     ${meus.length ? `<p class="sub">Seus itens mundiais: ${meus.length} de ${MUNDIAIS.length}${cdR > 0 ? ' · recarregando: ' + mmssM(cdR) : ' · pronto para usar'}</p>` : ''}
     <div class="forja">${MUNDIAIS.map((W, i) => { const c = custoMundial(i), feito = !!feitos[i], meu = meus.includes(i), naMao = S.mundial === i, ok = !feito && temMats(c) && qtd >= 3; return `<div class="anel ${ok ? 'pode' : ''}" style="--c:${W.cor}"><div class="ai"><svg viewBox="0 0 24 24"><path d="M12 2 21 8v8l-9 6-9-6V8z" fill="${W.cor}" stroke="#fff" stroke-width=".8"/><circle cx="12" cy="12" r="3" fill="#fff"/></svg></div><div class="ad"><b style="color:${W.cor}">${W.nome}</b> <span class="unica">Mundial · único</span>${meu ? ' <span class="unica" style="background:#2a6a3a">Seu</span>' : feito ? ' <span class="unica">Já forjado</span>' : ''}<p>${W.d}. Elemento: ${EL[W.el].nome}.</p>
       <div class="rec">${c.map(([id, q]) => { const t = S.mat[id] || 0; return `<span class="ri ${t >= q ? 'ok' : ''}" data-tip="mat:${id}">${iconeMat(MATS[id])}<em>${escH(MATS[id].nome)}</em><b>${fmt(Math.min(t, q))}/${q}</b></span>`; }).join('')}<span class="ri ${qtd >= 3 ? 'ok' : ''}"><em>Anéis para sacrificar</em><b>${qtd}/3+</b></span></div>
@@ -4101,6 +4451,7 @@ function abrirTeleporte() {
   const dest = [{ n: 'Praça do Prisma', x: 0, z: 8, c: '#7ff0ff' }, { n: 'Castelo Antigo de Avalan', x: AVALAN.x, z: AVALAN.z + 22, c: '#9fd8ff' }]
     .concat(ALTARES.map((a) => ({ n: 'Altar de ' + ARCANJOS[a.i].nome.replace('Arcanjo ', ''), x: a.x + 14, z: a.zz, c: ARCANJOS[a.i].cor })))
     .concat([{ n: 'Santuário das Marcas', x: SANTUARIO.x + 12, z: SANTUARIO.z, c: '#c060ff' }])
+    .concat(S.ceuAberto ? [{ n: 'Praça Celestial (mundo celestial)', x: CEU_PTS.chegada.x, z: CEU_PTS.chegada.z, y: 9.5, c: '#bfe8ff' }] : [])
     .concat(ILHAS.map((I) => ({ n: 'Ilha voadora · portal para ' + BIOMAS[REINOS[I.j].bi].nome, x: I.portal.x - 5, z: I.portal.z, y: I.topo + 1, c: BIOMAS[REINOS[I.j].bi].cor, sub2: BIOMAS[I.bi].nome })))
     .concat(CHEFES_ORD.filter((c) => c.tipo === 'normal' || (S.reinosVistos && S.reinosVistos[c.j])).map((c) => ({ n: (c.tipo === 'def' ? 'Chefe Definitivo · ' : 'Chefe ' + c.num + ' · ') + c.nome, x: c.x + 22, z: c.zz, c: c.cor, vivo: chefeVivo(c), sub: BIOMAS[c.bi].nome })));
   painel.innerHTML = `<div class="cab"><h3 style="color:#5affd8">Anel do Teleporte</h3><button class="fechar" id="fx" aria-label="Fechar">×</button></div>
@@ -4242,7 +4593,7 @@ function lerControle(dt) {
   if (apertou(15)) { abrirStatus(); padChave = null; setTimeout(refocar, 0); }
   PAD.ant = p.buttons.map((x, i) => b(i));
 }
-function voltarPraca() { if (!J.vivo || J.voltando > 0) return; if (Math.hypot(J.x, J.z) < 40) { aviso('Você já está na praça.', 2); return; } J.voltando = 3; aviso('Voltando à praça… fique parado', 3); }
+function voltarPraca() { if (!J.vivo || J.voltando > 0) return; { const pp = pontoPraca(); if (Math.hypot(J.x - pp[0], J.z - pp[1]) < 40) { aviso('Você já está na praça.', 2); return; } } J.voltando = 3; aviso('Voltando à praça… fique parado', 3); }
 
 // =====================================================================
 //  COMBATE · dano, defesas, atributos, antimagia, recompensas
@@ -4275,29 +4626,32 @@ function causarDano(m, dano, op) {
   if (m.hp.lte(0)) { if (m.arc && barraArcanjo(m)) return; matarMob(m); }
 }
 function golpearMob(m, dano, dx, dz, magia) { causarDano(m, dano, { dx, dz, magia: !!magia, anti: (() => { const h = segurado(); return !!(h && h.tags && h.tags.includes('antimagia')); })() }); }
+// chance que passa de 100% vira quantidade: 3.4 = 3 garantidos + 40% de mais 1
+const rolar = (p) => { if (p <= 0) return 0; const n = Math.floor(p); return n + (Math.random() < p - n ? 1 : 0); };
 function ganharMat(id, n) { if (!n) return; S.mat[id] = (S.mat[id] || 0) + n; sujo = true; feedMat(id, n); }
 function matarMob(m) {
   particula(m.x, m.y + 1.2 * m.tam, m.z, m.esp.cor, m.chefe || m.arc ? 26 : 10, m.chefe ? 12 : 7, m.chefe ? 0.6 : 0.32, 1.1, 7); som('morte');
   soltarPontos(m.x, m.y + 0.5, m.z, m.pts.mul(multPontos()).floor(), !!(m.chefe || m.arc)); S.abates++; sujo = true; contarAbate(m);
-  const bi = m.chefe ? m.chefe.bi : Math.max(0, biomaEm(m.x, m.z)), md = multDrop();
+  const bi = m.chefe ? m.chefe.bi : Math.max(0, biomaEm(m.hx, m.hz)), md = multDrop();
   if (m.arc) { morteArcanjo(m); removerMob(m); return; }
   if (m.maldito !== undefined) { morteMaldito(m); const rb = maiorChefeVencido(); for (let i = 0; i < 3; i++) soltarBau(m.x, m.y + 1, m.z, rb ? rb.bi : 0, 5); removerMob(m); return; }
   if (!m.lacaio) {
-    // materiais
-    const me = MAT_ESP[m.esp.i], q = m.chefe ? 12 : m.elite ? 3 : 1;
-    if (me) { if (Math.random() < Math.min(1, 0.7 * md)) ganharMat(me[0], q * (1 + Math.floor(Math.random() * 2))); if (Math.random() < Math.min(1, 0.25 * md * (m.elite ? 2 : 1))) ganharMat(me[1], Math.max(1, Math.round(q / 2))); if (Math.random() < Math.min(1, 0.06 * md * (m.chefe ? 8 : m.elite ? 3 : 1))) ganharMat(me[2], m.chefe ? 2 : 1); }
-    if (Math.random() < Math.min(1, 0.3 * md)) ganharMat(MAT_BIO[bi][0], m.chefe ? 6 : 1); if (Math.random() < Math.min(1, (m.chefe ? 0.5 : 0.04) * md)) ganharMat(MAT_BIO[bi][1], 1); if (Math.random() < Math.min(1, (m.chefe ? 1 : 0.08) * md)) ganharMat(MAT_BIO[bi][2], m.chefe ? 4 : 1);
-    const ger = Math.min(9, Math.floor(BIOMAS[bi].anel / 1.5)); if (Math.random() < Math.min(1, (m.chefe ? 0.6 : 0.03) * md)) ganharMat(MAT_GER[Math.floor(Math.random() * (ger + 1))], m.chefe ? 2 : 1);
-    if (m.chefe) { const mc = MAT_CHEFE[m.chefe.k]; ganharMat(mc[0], 1); if (Math.random() < 0.5 * md) ganharMat(mc[1], 1); if (Math.random() < 0.15 * md) ganharMat(mc[2], 1); if (Math.random() < 0.05 * md) ganharMat(mc[3], 1); if (!S.chefesVencidos) S.chefesVencidos = {}; S.chefesVencidos[m.chefe.k] = 1; }
-    // poções: 2% dos monstros, 30% dos chefes
-    if (Math.random() < (m.chefe ? 0.3 : m.elite ? 0.08 : 0.02) * md) { const p = gerarPocao(bi, m.chefe ? 3 : 0); guardarPocao(p.pid, m.chefe ? 1 + Math.floor(Math.random() * 3) : 1); toast('+ ' + POCOES[p.pid].nome, POCOES[p.pid].cor); }
-    // baús
+    // materiais: a chance de drop também multiplica a QUANTIDADE (chance acima de 100% vira drops extras garantidos)
+    const me = MAT_ESP[m.esp.i], q = m.chefe ? 12 : m.elite ? 3 : 1, dar = (id, p, n) => { const k = rolar(p * md); if (k) ganharMat(id, n * k); };
+    if (me) { dar(me[0], 0.7, q * (1 + Math.floor(Math.random() * 2))); dar(me[1], 0.25 * (m.elite ? 2 : 1), Math.max(1, Math.round(q / 2))); dar(me[2], 0.06 * (m.chefe ? 8 : m.elite ? 3 : 1), m.chefe ? 2 : 1); }
+    dar(MAT_BIO[bi][0], 0.3, m.chefe ? 6 : 1); dar(MAT_BIO[bi][1], m.chefe ? 0.5 : 0.04, 1); dar(MAT_BIO[bi][2], m.chefe ? 1 : 0.08, m.chefe ? 4 : 1);
+    const ger = Math.min(9, Math.floor(BIOMAS[bi].anel / 1.5)); { const k = rolar((m.chefe ? 0.6 : 0.03) * md); for (let i = 0; i < Math.min(k, 30); i++) ganharMat(MAT_GER[Math.floor(Math.random() * (ger + 1))], (m.chefe ? 2 : 1) * Math.max(1, Math.round(k / 30))); }
+    if (m.chefe) { const mc = MAT_CHEFE[m.chefe.k]; ganharMat(mc[0], 1); dar(mc[1], 0.5, 1); dar(mc[2], 0.15, 1); dar(mc[3], 0.05, 1); if (!S.chefesVencidos) S.chefesVencidos = {}; S.chefesVencidos[m.chefe.k] = 1; if (m.chefe.tipo === 'ceu') morteChefeCeu(m.chefe); }
+    // poções: 2% dos monstros, 30% dos chefes (no céu, mais: o jogo depende delas)
+    { const ceu = BIOMAS[bi].ceu ? 2.5 : 1, k = Math.min(20, rolar((m.chefe ? 0.3 : m.elite ? 0.08 : 0.02) * ceu * md)); for (let i = 0; i < k; i++) { const p = gerarPocao(bi, m.chefe ? 3 : 0); guardarPocao(p.pid, m.chefe ? 1 + Math.floor(Math.random() * 3) : 1); if (i < 3) toast('+ ' + POCOES[p.pid].nome, POCOES[p.pid].cor); } }
+    // baús (até 3 caem no chão; o resto vai direto para o inventário)
+    let soltos = 0; const bau = (rar) => { if (soltos++ < 3) soltarBau(m.x, m.y + 1, m.z, bi, rar); else guardarBau(bi, rar, 1); };
     if (m.chefe) {
-      const n = 1 + (Math.random() < 0.5 ? 1 : 0); for (let i = 0; i < n; i++) soltarBau(m.x, m.y + 1, m.z, bi, sorteio([10, 30, 32, 20, 8]));
-      if (Math.random() < 0.15 * Math.min(2, md)) { soltarBau(m.x, m.y + 1, m.z, bi, 5); toast('BAÚ DOURADO!', '#ffd84a'); }
-      if (m.chefe.tipo === 'def') { morteDefinitivo(m.chefe); for (let i = 0; i < 3; i++) soltarBau(m.x, m.y + 1, m.z, bi, 5); }
+      const n = 1 + (Math.random() < 0.5 ? 1 : 0); for (let i = 0; i < n; i++) bau(sorteio([10, 30, 32, 20, 8]));
+      { const k = Math.min(40, rolar(0.15 * md)); for (let i = 0; i < k; i++) bau(5); if (k) toast((k > 1 ? k + 'x ' : '') + 'BAÚ DOURADO!', '#ffd84a'); }
+      if (m.chefe.tipo === 'def') { morteDefinitivo(m.chefe); for (let i = 0; i < 3; i++) bau(5); }
       S.chefeMorte[m.chefe.id] = Date.now(); S.chefes++; banner(m.nome + ' derrotado', '+' + fmt(m.pts.mul(multPontos())) + ' pontos · volta em ' + Math.ceil(respChefe() / 60000) + ' min');
-    } else if (Math.random() < Math.min(0.3, (m.elite ? 0.1 : 0.025) * md)) soltarBau(m.x, m.y + 1, m.z, bi, sorteio(m.elite ? [20, 34, 28, 14, 4] : [60, 26, 10, 3.5, 0.5]));
+    } else { const k = Math.min(40, rolar((m.elite ? 0.1 : 0.025) * md)); for (let i = 0; i < k; i++) bau(sorteio(m.elite ? [20, 34, 28, 14, 4] : [60, 26, 10, 3.5, 0.5])); }
   }
   if (m.spawn) m.spawn.volta = 0.15; // monstros comuns renascem na hora
   removerMob(m);
@@ -4335,7 +4689,7 @@ function lancarMagia() {
 function ferirJogador(d, fonte, refletido) {
   if (!J.vivo || J.invul > 0 || criando || invulMundial()) return; d = D.n(d);
   if (fonte && fonte.paz && fonte.paz > agoraS()) return;
-  d = d.mul((1 - Math.min(0.8, bv('reducao'))) * (bv('aEgide') ? 0.4 : 1) * (1 - ZB.reducao) * (1 - (E.reducao || 0)) * (1 + (E.danoRec || 0)) * (fonte && fonte.furiaAte > agoraS() ? 1.5 : 1));
+  d = d.mul((bv('wOlho') ? 0.5 : 1) * (1 - Math.min(0.8, bv('reducao'))) * (bv('aEgide') ? 0.4 : 1) * (1 - ZB.reducao) * (1 - (E.reducao || 0)) * (1 + (E.danoRec || 0)) * (fonte && fonte.furiaAte > agoraS() ? 1.5 : 1));
   if (fonte && fonte.fracoZ) d = d.mul(1 - fonte.fracoZ);
   if (fonte && atrAtivo(fonte, 'furia') && D.razao(fonte.hp, fonte.hpMax) < 0.4) d = d.mul(1.6);
   if (fonte && atrAtivo(fonte, 'vampiro') && mobs.includes(fonte)) { fonte.hp = D.min(fonte.hpMax, fonte.hp.add(fonte.hpMax.mul(fonte.arc ? 0.03 : 0.015))); particula(fonte.x, fonte.y + altMob(fonte) * 0.6, fonte.z, '#d0203a', 3, 3, 0.2, 0.5, 3); }
@@ -4345,7 +4699,7 @@ function ferirJogador(d, fonte, refletido) {
     // ressurreição (anel) ou fênix (poção)
     for (const k of ['aRessurreicao', 'fenix']) if (bv(k)) { consumirBuff(k); J.hp = E.vidaMax; J.invul = 2.5; banner(k === 'fenix' ? 'Renascido das cinzas' : 'Ressurreição', 'Você voltou com a vida cheia'); fxPilar(J.x, J.z, 2, 20, '#ff9a3a', '#ffffff', 1); fxAnel(J.x, J.z, 1, 10, '#ffd84a', 0.6); buffMudou = true; return; }
     J.vivo = false; J.hp = D.Z; J.mov = null; contarMorte(); $('#morte').hidden = false; particula(J.x, J.y + 1.5, J.z, OPC.camisa[S.look.camisa], 14, 8, 0.3, 1.2, 6); J.modelo.raiz.vis = false;
-    setTimeout(() => { J.x = 0; J.z = 6; J.y = 3; J.vy = 0; J.hp = E.vidaMax; J.vivo = true; J.invul = 2; J.modelo.raiz.vis = true; $('#morte').hidden = true; }, 2600);
+    setTimeout(() => { const pp = pontoPraca(); J.x = pp[0]; J.z = pp[1]; J.y = pp[2]; J.vy = 0; J.hp = E.vidaMax; J.vivo = true; J.invul = 2; J.modelo.raiz.vis = true; $('#morte').hidden = true; }, 2600);
   }
 }
 const avisos = [];
@@ -4400,19 +4754,19 @@ function atualizarJogador(dt) {
   const il = Math.hypot(ix, iz); if (il > 1) { ix /= il; iz /= il; }
   const fx = -Math.sin(cam.yaw), fz = -Math.cos(cam.yaw), rx = -fz, rz = fx;
   const mx = fx * iz + rx * ix, mz = fz * iz + rz * ix, mv = Math.hypot(mx, mz);
-  const liq = liquidoEm(J.x, J.z) && J.y < 0.9 ? liquidoEm(J.x, J.z) : null; const vel = E.vel * (1 + ZB.vel) * (1 - ZB.lentoJ) * ((liq === 'agua' || liq === 'veneno') && !bv('imune') ? 0.55 : 1) * (bv('hmPasso') ? 2.5 : 1);
-  if (J.voltando > 0) { if (mv > 0.1) { J.voltando = 0; aviso('Volta cancelada.', 1.5); } else { J.voltando -= dt; if (J.voltando <= 0) { particula(J.x, J.y + 1, J.z, '#7ff0ff', 14, 6, 0.25, 0.8, 6); J.x = 0; J.z = 6; J.y = 3; J.vy = 0; banner('Praça do Prisma', 'Zona segura'); } } }
+  const liq = liquidoEm(J.x, J.z) && J.y < 0.9 ? liquidoEm(J.x, J.z) : null; const vel = E.vel * (1 + ZB.vel) * (1 - ZB.lentoJ) * ((liq === 'agua' || liq === 'veneno') && !bv('imune') ? 0.55 : 1) * (bv('hmPasso') ? 2.5 : 1) * (bv('wMartelo') ? 1.6 : 1);
+  if (J.voltando > 0) { if (mv > 0.1) { J.voltando = 0; aviso('Volta cancelada.', 1.5); } else { J.voltando -= dt; if (J.voltando <= 0) { particula(J.x, J.y + 1, J.z, '#7ff0ff', 14, 6, 0.25, 0.8, 6); { const pp = pontoPraca(); J.x = pp[0]; J.z = pp[1]; J.y = pp[2]; } J.vy = 0; banner(naCeu() ? 'Praça Celestial' : 'Praça do Prisma', 'Zona segura'); } } }
   if (mv > 0.05 && !emMov) { andarSobre(J, mx * vel * dt, mz * vel * dt, J.chao ? 1.05 : 0.02); J.rot = Math.atan2(mx, mz); J.anda += dt * Math.min(vel, 20) * 0.9 * mv; }
   const g = chaoJ(J.x, J.z, J.y);
-  if (pedePulo && J.chao && !criando && !emMov) { J.vy = Math.sqrt(2 * 38 * E.pulo * (1 + ZB.pulo) * (bv('hmPasso') ? 2 : 1)); J.chao = false; som('pulo'); particula(J.x, J.y + 0.1, J.z, '#ffffff', 4, 3, 0.18, 0.4, 1); }
+  if (pedePulo && J.chao && !criando && !emMov) { J.vy = Math.sqrt(2 * 38 * E.pulo * (1 + ZB.pulo) * (bv('hmPasso') ? 2 : 1) * (bv('wAsa') ? 3 : 1)); J.chao = false; som('pulo'); particula(J.x, J.y + 0.1, J.z, '#ffffff', 4, 3, 0.18, 0.4, 1); }
   pedePulo = false;
   if (!emMov) { J.vy = Math.max(-80, J.vy - 38 * dt); J.y += J.vy * dt; }
   if (J.y <= g) { if (!J.chao && J.vy < -14) particula(J.x, g + 0.1, J.z, '#ffffff', 5, 4, 0.2, 0.4, 1); J.y = g; J.vy = 0; J.chao = true; } else if (J.y > g + 0.05) J.chao = false;
-  if ((liq === 'lava' || liq === 'veneno') && !bv('imune') && !ZB.imune) { J.lava += dt; if (J.lava >= 0.5) { J.lava = 0; ferirJogador(E.vidaMax.mul(liq === 'lava' ? 0.12 : 0.05).add(2)); J.invul = 0; } }
+  if ((liq === 'lava' || liq === 'veneno') && !bv('imune') && !bv('wCalice') && !ZB.imune) { J.lava += dt; if (J.lava >= 0.5) { J.lava = 0; ferirJogador(E.vidaMax.mul(liq === 'lava' ? 0.12 : 0.05).add(2)); J.invul = 0; } }
   if (pedeUsar && !criando && !painelAberto && !rodaAberta && !emMov) usarItem(); pedeUsar = false;
   if (pedeHab && !rodaAberta) usarHabilidade(); pedeHab = false;
   J.cd -= dt; J.golpe -= dt; J.tDor += dt; J.invul -= dt;
-  const naPraca = Math.hypot(J.x, J.z) < 40; if (J.tDor > 5 || naPraca) J.hp = D.min(E.vidaMax, J.hp.add(E.vidaMax.mul((naPraca ? 0.2 : 0.03) * dt)));
+  const naPraca = Math.hypot(J.x, J.z) < 40 || Math.hypot(J.x - CEUL.hx, J.z - CEUL.hz) < 85; if (J.tDor > 5 || naPraca) J.hp = D.min(E.vidaMax, J.hp.add(E.vidaMax.mul((naPraca ? 0.2 : 0.03) * dt)));
   const M = J.modelo, sw = Math.sin(J.anda * 1.6) * (mv > 0.05 && J.chao ? 0.75 : 0);
   M.raiz.p = [J.x, J.y, J.z]; M.raiz.r[1] = J.rot; M.pernaE.r[0] = sw; M.pernaD.r[0] = -sw; M.bracoE.r[0] = -sw * 0.8;
   M.bracoD.r[0] = J.golpe > 0 ? -2.2 + (0.3 - J.golpe) * 9 : sw * 0.8 - 0.2; M.corpo.p[1] = mv > 0.05 && J.chao ? Math.abs(Math.sin(J.anda * 1.6)) * 0.08 : 0;
@@ -4426,7 +4780,7 @@ function atualizarMob(m, dt) {
   if (m.arc) return atualizarArcanjo(m, dt);
   if (m.lacaio && Math.hypot(m.x - J.x, m.z - J.z) > 140) { removerMob(m); return; }
   if (tickStatus(m, dt)) return;
-  const t = m.esp, dx = J.x - m.x, dz = J.z - m.z, dist = Math.hypot(dx, dz), dCasa = Math.hypot(m.x - m.hx, m.z - m.hz), jogPraca = Math.hypot(J.x, J.z) < 42, leash = m.chefe ? 26 : 34;
+  const t = m.esp, dx = J.x - m.x, dz = J.z - m.z, dist = Math.hypot(dx, dz), dCasa = Math.hypot(m.x - m.hx, m.z - m.hz), jogPraca = Math.hypot(J.x, J.z) < 42 || Math.hypot(J.x - CEUL.hx, J.z - CEUL.hz) < 92, leash = m.chefe ? 26 : 34;
   if (J.vivo && !jogPraca && !criando && !bv('invis') && dist < t.aggro * (m.chefe ? 1.3 : 1) && dCasa < leash) m.alvo = true;
   if (!J.vivo || jogPraca || dCasa > leash + 6 || dist > t.aggro * 2.2) m.alvo = false;
   if (bv('invis') && m.flash <= 0) m.alvo = m.alvo && dist < 6;
@@ -4535,7 +4889,7 @@ function spawnsTick(dt) {
     for (const s of p.spawns) { if (s.mob) { if (s.sangue && !sangue && !s.mob.alvo) removerMob(s.mob); continue; } if (s.sangue && !sangue) continue; s.volta -= dt; if (s.volta <= 0) { s.mob = criarMob(s.esp, s.x, s.z, null, s); particula(s.x, chao(s.x, s.z) + 0.5, s.z, '#ffffff', 4, 3, 0.2, 0.5, 3); } }
     for (const c of p.chefes) if (!c.mob && chefeVivo(c)) c.mob = criarMob(c.esp, c.x, c.zz, c, null);
   }
-  CHEFES.forEach((c, i) => { feixes[i].a = chefeVivo(c) ? 0.22 : 0.05; });
+  CHEFES.forEach((c, i) => { feixes[i].a = chefeVivo(c) ? 0.22 : 0.05; feixes[i].vis = Math.abs(c.x - J.x) + Math.abs(c.zz - J.z) < 1600; });
 }
 
 
@@ -4593,7 +4947,8 @@ function desenharRadar() {
   rc.translate(C, C); rc.rotate(cam.yaw);
   // mapa dos biomas
   const px = (J.x + MAPA_R) / MAPA_M, pz = (J.z + MAPA_R) / MAPA_M, fonte = alcance / MAPA_M;
-  rc.imageSmoothingEnabled = true; rc.globalAlpha = 0.95; rc.drawImage(mapaCv, px - fonte, pz - fonte, fonte * 2, fonte * 2, -R, -R, R * 2, R * 2); rc.globalAlpha = 1;
+  if (naCeu()) { rc.save(); rc.translate(-J.x * s, -J.z * s); desenharIlhasCeu(rc, s, 1, J.x, J.z, alcance * 1.6); rc.restore(); }
+  else { rc.imageSmoothingEnabled = true; rc.globalAlpha = 0.95; rc.drawImage(mapaCv, px - fonte, pz - fonte, fonte * 2, fonte * 2, -R, -R, R * 2, R * 2); rc.globalAlpha = 1; }
   rc.translate(-J.x * s, -J.z * s);
   const contra = (fn, x, y) => { rc.save(); rc.translate(x, y); rc.rotate(-cam.yaw); fn(); rc.restore(); };
   for (const p of LISTA_PORT) { if (Math.hypot(p.x - J.x, p.z - J.z) > alcance * 1.3) continue; contra(() => { rc.fillStyle = '#ffe9a0'; rc.strokeStyle = '#000'; rc.lineWidth = 1.2; rc.fillRect(-3, -3, 6, 6); rc.strokeRect(-3, -3, 6, 6); }, p.x * s, p.z * s); }
@@ -4621,8 +4976,20 @@ function desenharRadar() {
   rc.save(); rc.translate(C, C); rc.rotate(Math.PI - J.rot + cam.yaw); rc.fillStyle = '#fff'; rc.strokeStyle = '#000'; rc.lineWidth = 2; rc.beginPath(); rc.moveTo(0, -13); rc.lineTo(9, 10); rc.lineTo(0, 5); rc.lineTo(-9, 10); rc.closePath(); rc.fill(); rc.stroke(); rc.restore();
 }
 // ---------------- mapa completo (tecla M) ----------------
+// ilhas do céu desenhadas direto (sem imagem pronta): retângulos arredondados, pontes e a praça
+function desenharIlhasCeu(x, s, rotulo, cx, cz, raio) {
+  const rr = (x0, y0, w, h, r) => { x.beginPath(); x.moveTo(x0 + r, y0); x.arcTo(x0 + w, y0, x0 + w, y0 + h, r); x.arcTo(x0 + w, y0 + h, x0, y0 + h, r); x.arcTo(x0, y0 + h, x0, y0, r); x.arcTo(x0, y0, x0 + w, y0, r); x.closePath(); };
+  x.strokeStyle = '#fff2c0'; x.lineWidth = Math.max(1.5, 10 * s); for (const p of PONTES_CEU) { if (raio && distSeg(cx, cz, p) > raio) continue; x.globalAlpha = ceuLiberado(p.b) ? 0.9 : 0.35; x.beginPath(); x.moveTo(p.x0 * s, p.z0 * s); x.lineTo(p.x1 * s, p.z1 * s); x.stroke(); } x.globalAlpha = 1;
+  x.fillStyle = '#e8e0ff'; x.beginPath(); x.arc(CEUL.hx * s, CEUL.hz * s, 92 * s, 0, TAU); x.fill();
+  for (let a = 0; a < N_CEU; a++) { const c = centroCeu(a); if (raio && Math.hypot(c.x - cx, c.z - cz) > raio + 320) continue; const B = BIOMAS[CEU_B0 + a], ok = ceuLiberado(a);
+    x.globalAlpha = ok ? 0.95 : 0.4; x.fillStyle = B.cor; rr((c.x - CEUL.W2) * s, (c.z - CEUL.L2) * s, CEUL.W2 * 2 * s, CEUL.L2 * 2 * s, 45 * s); x.fill(); x.globalAlpha = 1;
+    if (rotulo) { x.fillStyle = S.ceuVencidos && S.ceuVencidos[a] ? '#1a3a1a' : '#1a1430'; x.font = '800 ' + Math.max(9, Math.min(16, 90 * s)) + 'px Nunito, sans-serif'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(String(a + 1), c.x * s, c.z * s); } }
+}
 function desenharMapa() {
-  const c = $('#mapaC'); if (!c) return; const x = c.getContext('2d'), W = c.width, s = W / (MAPA_R * 2), agora = Date.now();
+  const c = $('#mapaC'); if (!c) return;
+  if (naCeu()) { const x = c.getContext('2d'), W = c.width, ext = 5200, s = W / ext, ox = CEUL.hx - 200, oz = -CEUL.L2 - 100; x.clearRect(0, 0, W, W); x.fillStyle = '#9fc8ff'; x.fillRect(0, 0, W, W); x.save(); x.translate(-ox * s, -oz * s); desenharIlhasCeu(x, s, 1);
+    for (const ch of CHEFES) if (ch.tipo === 'ceu') coroa(x, ch.x * s, ch.zz * s, 4, chefeVivo(ch) ? '#ffd84a' : '#555');
+    x.save(); x.translate(J.x * s, J.z * s); x.rotate(Math.PI - J.rot); x.fillStyle = '#fff'; x.strokeStyle = '#000'; x.lineWidth = 2; x.beginPath(); x.moveTo(0, -9); x.lineTo(6, 7); x.lineTo(0, 3); x.lineTo(-6, 7); x.closePath(); x.fill(); x.stroke(); x.restore(); x.restore(); return; } const x = c.getContext('2d'), W = c.width, s = W / (MAPA_R * 2), agora = Date.now();
   while (!mapaPronto) pintarMapa(64);
   x.clearRect(0, 0, W, W); x.imageSmoothingEnabled = true; x.drawImage(mapaCv, 0, 0, W, W);
   x.save(); x.translate(W / 2, W / 2);
@@ -4639,6 +5006,7 @@ function desenharMapa() {
   x.restore();
 }
 function infoMapa(u, v) {
+  if (naCeu()) { const el = $('#mapaInfo'); if (!el) return; const s2 = 5200, wx = CEUL.hx - 200 + u * s2, wz = -CEUL.L2 - 100 + v * s2, C = coordCeu(wx, wz); if (C.i < CEU_B0) { el.innerHTML = C.i === -4 && !C.vazio ? '<b>Praça Celestial</b> · zona segura, Feiticeiro e Pedra de Viagem' : 'O vazio entre as ilhas.'; return; } const B = BIOMAS[C.i], ch = CHEFES_DO_BIO[C.i][0]; el.innerHTML = `<b style="color:${B.cor}">${escH(B.nome)}</b> · ilha ${B.a + 1} de ${N_CEU}${ceuLiberado(B.a) ? '' : ' (selada)'}${ch ? ' · chefe: ' + escH(ch.nome) + (S.ceuVencidos && S.ceuVencidos[B.a] ? ' (vencido)' : '') : ''}`; return; }
   const wx = (u - 0.5) * MAPA_R * 2, wz = (v - 0.5) * MAPA_R * 2, [d, a] = coord(wx, wz), bi = biomaDe(d, a), el = $('#mapaInfo'); if (!el) return;
   const ilha = ILHAS.find((I) => Math.hypot(I.x - wx, I.z - wz) < 40);
   if (bi < 0) { el.textContent = 'Praça do Prisma · zona segura'; return; }
@@ -4663,11 +5031,11 @@ function quadro(agora) {
   atualizarZonas(dt); tickBuffs(dt); atualizarJogador(dt); for (const m of mobs.slice()) atualizarMob(m, dt); atualizarProjs(dt); atualizarProjHab(dt); atualizarOrbitas(dt); atualizarFX(dt); atualizarFeed(dt); tickJogo(dt); tickOnline(dt); atualizarDrops(dt); atualizarParts(dt); spawnsTick(dt);
   // bioma atual
   const [dd, aa] = coord(J.x, J.z), bi = biomaDe(dd, aa), B = bioOu(bi);
-  if (bi !== J.bioma) { J.bioma = bi; const chs = bi >= 0 ? CHEFES_DO_BIO[bi] : [], nivel = bi < 0 ? '' : B.reino ? 'Reino secreto ' + (bi - N_AREAS + 1) + ' de 7' : 'Região ' + (bi + 1) + ' de ' + N_AREAS;
+  if (bi !== J.bioma) { J.bioma = bi; const chs = bi >= 0 ? CHEFES_DO_BIO[bi] : [], nivel = bi < 0 ? '' : B.ceu ? 'Ilha celestial ' + (B.a + 1) + ' de ' + N_CEU + (ceuLiberado(B.a) ? '' : ' (selada)') : B.reino ? 'Reino secreto ' + (bi - N_AREAS + 1) + ' de 7' : 'Região ' + (bi + 1) + ' de ' + N_AREAS;
     if (S.criado) banner(B.nome, bi < 0 ? 'Zona segura · a vida volta rápido aqui' : nivel + (chs.length ? ' · ' + (chs.length > 1 ? chs.length + ' chefes' : 'chefe: ' + chs[0].nome) : '') + (B.deg >= 3 ? ' · degraus de ' + B.deg + ' m' : '') + (B.liq === 'lava' ? ' · lava queima' : B.liq === 'veneno' ? ' · o pântano envenena' : ''));
-    $('#zNome').textContent = B.nome; $('#zPerigo').textContent = bi < 0 ? 'segura' : B.reino ? 'reino ' + (bi - N_AREAS + 1) : 'região ' + (bi + 1);
-    if (bi >= 0 && !B.reino) { if (!S.visitadas) S.visitadas = {}; if (!S.visitadas[bi]) { S.visitadas[bi] = 1; sujo = true; } } }
-  $('#dist').textContent = J.x > 5000 ? 'reino secreto' : Math.round(Math.hypot(J.x, J.z)) + ' m da praça';
+    $('#zNome').textContent = B.nome; $('#zPerigo').textContent = bi < 0 ? 'segura' : B.ceu ? 'ilha ' + (B.a + 1) : B.reino ? 'reino ' + (bi - N_AREAS + 1) : 'região ' + (bi + 1);
+    if (bi >= 0 && !B.reino && !B.ceu) { if (!S.visitadas) S.visitadas = {}; if (!S.visitadas[bi]) { S.visitadas[bi] = 1; sujo = true; } } }
+  $('#dist').textContent = J.x > 15000 ? 'mundo celestial' : J.x > 5000 ? 'reino secreto' : Math.round(Math.hypot(J.x, J.z)) + ' m da praça';
   atualizarCeu(dd, aa, dt);
   const far = QUAL[S.cfg.q].raio * CW * 0.95 * (evento('nevoa') ? 0.4 : 1); R.fog = [far * 0.42, far];
   // câmera
