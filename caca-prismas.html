@@ -1604,6 +1604,7 @@ function apagarConta(id) { if (id === CONTAS.atual || CONTAS.lista.length < 2) r
 function resumoConta(c) { try { const d = JSON.parse(localStorage.getItem(c.chave) || 'null'); if (!d) return null; return { nome: (d.look && d.look.nome) || '', total: D.n(d.total || 0), salvoEm: d.salvoEm || 0, chefes: d.chefesVencidos ? Object.keys(d.chefesVencidos).length : 0 }; } catch (e) { return null; } }
 const LOOK0 = { nome: '', pele: 0, cabelo: 1, corCab: 0, camisa: 1, calca: 0, chapeu: 0, capa: 0, olhos: 0 };
 const MAX_INV = 200, MAX_VP = 10000;
+const N_MUNDIAIS = 6; // quantos itens mundiais existem (o save é lido antes da lista de itens, então o número fica aqui)
 let S = null;
 function novoS() { return { pts: D.Z, total: D.Z, at: { espada: D.Z, magia: D.Z, vida: D.Z, vel: 0, pulo: 0 }, look: Object.assign({}, LOOK0), criado: false, abates: 0, chefes: 0, inv: [], barra: [null, null, null, null, null, null, null, null], sel: 0, equip: { capacete: null, peitoral: null, calca: null, bota: null }, nid: 1, chefeMorte: {}, mat: {}, aneis: {}, roda: [null, null, null, null, null], arcanjos: 0, arcVit: [0, 0, 0, 0], habVistas: {}, buffs: {}, versao: VERSAO_SAVE, est: {}, build: { xp: {}, uso: {} }, mundial: null, chefesVencidos: {}, marca: null, selos: {}, visitadas: {}, reinosVistos: {}, cfg: { aura: 1, auraSel: -1, q: matchMedia('(pointer:coarse)').matches ? 0 : 1, sens: 1, som: true, fps: false } }; }
 // ---------------- save com versão, migração e cópias de segurança ----------------
@@ -1649,19 +1650,20 @@ function lerSave(txt) {
   n.equip = Object.assign({ capacete: null, peitoral: null, calca: null, bota: null }, d.equip || {}); for (const k in n.equip) n.equip[k] = reviverItem(n.equip[k]);
   n.mat = d.mat && typeof d.mat === 'object' ? d.mat : {}; n.aneis = d.aneis && typeof d.aneis === 'object' ? d.aneis : {};
   n.roda = (Array.isArray(d.roda) ? d.roda : []).slice(0, 5); while (n.roda.length < 5) n.roda.push(null);
-  n.chefeMorte = d.chefeMorte || {}; n.habVistas = d.habVistas || {}; n.arcVit = Array.isArray(d.arcVit) ? d.arcVit.concat([0, 0, 0, 0]).slice(0, 4) : [0, 0, 0, 0]; n.buffs = d.buffs || {}; n.est = d.est || {}; n.build = d.build && d.build.xp ? d.build : { xp: {}, uso: {} }; n.mundiaisFeitos = d.mundiaisFeitos || {}; n.mundiaisTem = Array.isArray(d.mundiaisTem) ? d.mundiaisTem.filter((i) => MUNDIAIS[i]) : []; n.cdMundial = +d.cdMundial || 0; n.mundial = Number.isInteger(d.mundial) && MUNDIAIS[d.mundial] ? d.mundial : null; if (n.mundial !== null && !n.mundiaisTem.includes(n.mundial)) { n.mundiaisTem.push(n.mundial); n.mundiaisFeitos[n.mundial] = 1; } n.chefesVencidos = d.chefesVencidos || {}; n.marca = d.marca && MARCAS[d.marca.i] ? { i: d.marca.i | 0, nv: clamp(d.marca.nv | 0, 1, 5) } : null; n.selos = d.selos || {}; n.ceuAberto = !!d.ceuAberto; n.ceuVencidos = d.ceuVencidos || {}; n.visitadas = d.visitadas || {}; n.reinosVistos = d.reinosVistos || {};
+  n.chefeMorte = d.chefeMorte || {}; n.habVistas = d.habVistas || {}; n.arcVit = Array.isArray(d.arcVit) ? d.arcVit.concat([0, 0, 0, 0]).slice(0, 4) : [0, 0, 0, 0]; n.buffs = d.buffs || {}; n.est = d.est || {}; n.build = d.build && d.build.xp ? d.build : { xp: {}, uso: {} }; n.mundiaisFeitos = d.mundiaisFeitos || {}; n.mundiaisTem = Array.isArray(d.mundiaisTem) ? d.mundiaisTem.filter((i) => Number.isInteger(i) && i >= 0 && i < N_MUNDIAIS) : []; n.cdMundial = +d.cdMundial || 0; n.mundial = Number.isInteger(d.mundial) && d.mundial >= 0 && d.mundial < N_MUNDIAIS ? d.mundial : null; if (n.mundial !== null && !n.mundiaisTem.includes(n.mundial)) { n.mundiaisTem.push(n.mundial); n.mundiaisFeitos[n.mundial] = 1; } n.chefesVencidos = d.chefesVencidos || {}; n.marca = d.marca && MARCAS[d.marca.i] ? { i: d.marca.i | 0, nv: clamp(d.marca.nv | 0, 1, 5) } : null; n.selos = d.selos || {}; n.ceuAberto = !!d.ceuAberto; n.ceuVencidos = d.ceuVencidos || {}; n.visitadas = d.visitadas || {}; n.reinosVistos = d.reinosVistos || {};
   // ids únicos: garante que o próximo id não repete nenhum item salvo
   let maior = 0; for (const it of [...n.inv, ...n.barra, ...Object.values(n.equip)]) if (it && it.id > maior) maior = it.id; n.nid = Math.max(n.nid || 1, maior + 1);
   return n;
 }
 S = novoS();
-let saveOrigem = 'novo';
+let saveOrigem = 'novo', saveFalhou = false;
 try {
   const tentar = (k) => { try { const t = localStorage.getItem(k); return t ? lerSave(t) : null; } catch (e) { return null; } };
   let n = tentar(CHAVE); if (n) saveOrigem = 'principal';
-  if (!n) { // save principal ausente ou corrompido: usa a cópia de segurança mais nova
+  if (!n) { // save principal ausente ou corrompido: guarda o texto bruto (nunca se perde) e usa a cópia de segurança mais nova
+    try { const bruto = localStorage.getItem(CHAVE); if (bruto) { saveFalhou = true; const kr = 'bolha:resgate:' + CONTA.id; if (localStorage.getItem(kr) !== bruto) localStorage.setItem(kr + ':' + Date.now(), bruto), localStorage.setItem(kr, bruto); } } catch (e) { /* ok */ }
     const bks = BK.map((k) => { try { const t = localStorage.getItem(k); const d = t && JSON.parse(t); return d && d.quando ? d : null; } catch (e) { return null; } }).filter(Boolean).sort((a, b) => b.quando - a.quando);
-    for (const b of bks) { n = lerSave(b.save); if (n) { saveOrigem = 'copia'; break; } }
+    for (const b of bks) { try { n = lerSave(b.save); } catch (e) { n = null; } if (n) { saveOrigem = 'copia'; break; } }
   }
   if (!n && CONTA.id === 'c1') { n = tentar('cacaprismas:v1'); if (n) saveOrigem = 'v1'; }
   if (n) {
@@ -1675,6 +1677,14 @@ function dadosSave() { // buffs ativos também são guardados (tempo que falta)
   try { const t = agoraS(), b = {}; for (const k in BUFF) if (BUFF[k].fim > t) b[k] = { v: BUFF[k].v, resta: BUFF[k].fim - t, dur: BUFF[k].dur, nome: BUFF[k].nome, cor: BUFF[k].cor }; S.buffs = b; } catch (e) { /* ok */ }
   S.versao = VERSAO_SAVE; S.salvoEm = Date.now(); return JSON.stringify(S);
 }
+// ---------------- recuperar saves antigos (principal, cópias, versões anteriores e resgates) ----------------
+function savesAntigos() {
+  const l = [], ok = (k) => (CONTA.id === 'c1' && CONTA.chave === 'cacaprismas:v2' ? k.startsWith('cacaprismas:') : k.startsWith(CHAVE)) || k.startsWith('bolha:resgate:' + CONTA.id);
+  let chaves = []; try { for (let i = 0; i < localStorage.length; i++) chaves.push(localStorage.key(i)); } catch (e) { return l; }
+  for (const k of chaves) { if (!ok(k) || k === CHAVE) continue; try { let d = JSON.parse(localStorage.getItem(k)); if (d && d.save) d = d.save; if (!d || !d.at) continue; const n = lerSave(JSON.parse(JSON.stringify(d))); if (!n) continue; l.push({ k, total: n.total, nome: n.look.nome || '', criado: n.criado, quando: d.salvoEm || 0, chefes: Object.keys(n.chefesVencidos || {}).length, bruto: d }); } catch (e) { /* save ilegível: ignora */ } }
+  return l.sort((a, b) => b.total.cmp(a.total));
+}
+function restaurarSave(c) { try { const n = lerSave(JSON.parse(JSON.stringify(c.bruto))); if (!n) return false; localStorage.setItem('bolha:resgate:' + CONTA.id + ':antes-de-restaurar', dadosSave()); S = n; salvar(); location.reload(); return true; } catch (e) { return false; } }
 function salvar() { try { localStorage.setItem(CHAVE, dadosSave()); ultimoSave = Date.now(); } catch (e) { /* cheio ou bloqueado */ } sujo = false; }
 function salvarCopia() { try { const i = Math.floor(Date.now() / 300000) % BK.length; localStorage.setItem(BK[i], JSON.stringify({ quando: Date.now(), save: JSON.parse(dadosSave()) })); } catch (e) { /* ok */ } }
 function codigoSave() { const t = dadosSave(); return 'BOLHA:' + btoa(unescape(encodeURIComponent(t))); }
@@ -4343,7 +4353,7 @@ function abrirAjustes() {
     <div class="op"><span>Teclado</span><p class="sub"><span class="tecla">WASD</span> andar · <span class="tecla">Espaço</span> pular · <span class="tecla">Clique</span> atacar · <span class="tecla">R</span> ou botão direito: habilidade · <span class="tecla">G</span> roda de anéis · <span class="tecla">F</span> interagir · <span class="tecla">1–8</span> barra · <span class="tecla">I</span> inventário · <span class="tecla">P</span> atributos · <span class="tecla">M</span> mapa · <span class="tecla">K</span> status · <span class="tecla">L</span> ou botão do meio: travar a mira · <span class="tecla">T</span> item mundial · <span class="tecla">H</span> voltar à praça</p></div>
     <div class="op"><span>Progresso e save</span><p class="sub">Monstros derrotados: ${S.abates.toLocaleString('pt-BR')} · Chefes: ${S.chefes} · Arcanjos: ${S.arcanjos || 0}.<br>O jogo salva sozinho a cada poucos segundos (save versão ${VERSAO_SAVE}) e guarda 3 cópias de segurança. ${ultimoSave ? 'Último save: ' + new Date(ultimoSave).toLocaleTimeString('pt-BR') + '.' : ''} As próximas atualizações convertem o save sem apagar nada.</p>
       <p class="sub">Para levar o progresso a outro aparelho ou guardar uma cópia sua, baixe o arquivo ou copie o código.</p>
-      <div class="sw"><button id="sAgora">Salvar agora</button><button id="sBaixar">Baixar arquivo do save</button><button id="sCopiar">Copiar código</button><button id="sCarregar">Carregar save…</button></div>
+      <div class="sw"><button id="sAgora">Salvar agora</button><button id="sBaixar">Baixar arquivo do save</button><button id="sCopiar">Copiar código</button><button id="sCarregar">Carregar save…</button><button id="sResgate">Recuperar save antigo</button></div>
       <div id="sCarga" hidden style="margin-top:8px"><textarea id="sTxt" class="campo" rows="3" placeholder="Cole aqui o código do save (começa com BOLHA: ou CP3:)" style="resize:vertical;font-size:12px"></textarea>
         <div class="sw" style="margin-top:6px"><button id="sUsar">Carregar este código</button><label class="mini" style="display:inline-flex;align-items:center;cursor:pointer">Escolher arquivo<input id="sArq" type="file" accept=".json,.txt,application/json,text/plain" hidden></label></div>
         <p class="sub" style="margin-top:6px">Carregar substitui o progresso atual. Antes disso, o atual vai para uma cópia de segurança.</p></div><p class="sub" id="sMsg" style="margin-top:6px"></p></div>`;
@@ -4356,7 +4366,7 @@ function abrirAjustes() {
   $('#autoLimpar').onclick = () => { const antes = S.inv.length; S.inv = S.inv.filter((it) => !((it.tipo === 'bau' && autoBau(it.rar)) || (it.tipo !== 'bau' && it.tipo !== 'pocao' && autoItem(it.rar)))); $('#autoMsg').textContent = antes - S.inv.length ? antes - S.inv.length + ' espaços liberados.' : 'Nada para apagar com essa escolha.'; sujo = true; };
   painel.querySelectorAll('[data-aura]').forEach((b) => (b.onclick = () => { S.cfg.aura = +b.dataset.aura; sujo = true; montarAura(); abrirAjustes(); }));
   painel.querySelectorAll('[data-asel]').forEach((b) => (b.onclick = () => { S.cfg.auraSel = +b.dataset.asel; sujo = true; montarAura(); abrirAjustes(); }));
-  $('#cContas').onclick = abrirContas;
+  $('#cContas').onclick = abrirContas; $('#sResgate').onclick = () => abrirResgate(false);
   $('#tFps').onclick = () => { S.cfg.fps = !S.cfg.fps; $('#fps').hidden = !S.cfg.fps; sujo = true; abrirAjustes(); };
   const msg = (t, ok) => { const el = $('#sMsg'); if (el) { el.textContent = t; el.style.color = ok ? '#6dff9a' : '#ff8a9a'; } };
   $('#sAgora').onclick = () => { salvar(); salvarCopia(); msg('Salvo às ' + new Date().toLocaleTimeString('pt-BR') + '.', true); };
@@ -4429,6 +4439,15 @@ function abrirForjaMundial() {
       <div class="rec">${c.map(([id, q]) => { const t = S.mat[id] || 0; return `<span class="ri ${t >= q ? 'ok' : ''}" data-tip="mat:${id}">${iconeMat(MATS[id])}<em>${escH(MATS[id].nome)}</em><b>${fmt(Math.min(t, q))}/${q}</b></span>`; }).join('')}<span class="ri ${qtd >= 3 ? 'ok' : ''}"><em>Anéis para sacrificar</em><b>${qtd}/3+</b></span></div>
       <div class="bts" style="justify-content:flex-start">${meu ? (naMao ? '<button disabled>Na sua mão esquerda</button>' : `<button class="pri" data-seg="${i}">Segurar este</button>`) : `<button data-mund="${i}" ${ok ? '' : 'disabled'}>${feito ? 'Único: já foi forjado' : 'Forjar e sacrificar anéis'}</button>`}</div></div></div>`; }).join('')}</div>`;
   $('#fx').onclick = fecharPainel; painel.querySelectorAll('[data-mund]').forEach((b) => (b.onclick = () => forjarMundial(+b.dataset.mund))); painel.querySelectorAll('[data-seg]').forEach((b) => (b.onclick = () => { segurarMundial(+b.dataset.seg); abrirForjaMundial(); }));
+}
+// ---------------- recuperar save antigo ----------------
+function abrirResgate(auto) {
+  const l = savesAntigos(); painelAberto = 'resgate'; modal.hidden = false; painel.className = 'painel';
+  painel.innerHTML = `<div class="cab"><h3>${auto ? 'Achamos um save seu mais avançado' : 'Recuperar save antigo'}</h3><button class="fechar" id="fx" aria-label="Fechar">×</button></div>
+    <p class="sub">${auto ? 'Uma atualização não conseguiu abrir o seu save e o jogo começou do zero. As cópias abaixo ainda estão guardadas neste aparelho.' : 'Cópias de segurança e versões anteriores do seu save guardadas neste aparelho.'} O save atual tem <b>${fmt(S.total)}</b> pontos. Recuperar troca o save atual pela cópia escolhida (o atual também fica guardado, caso mude de ideia).</p>
+    <div class="contas">${l.length ? l.map((c, i) => `<div class="conta"><div><b>${escH(c.nome || 'Sem nome')}</b><small>${fmt(c.total)} pontos · ${c.chefes} chefes vencidos${c.quando ? ' · salvo em ' + new Date(c.quando).toLocaleString('pt-BR') : ''}</small></div><div class="sw"><button class="pri" data-rest="${i}">Recuperar</button></div></div>`).join('') : '<p class="sub">Nenhuma cópia antiga encontrada neste aparelho.</p>'}</div>`;
+  $('#fx').onclick = () => { if (auto && l[0]) { S.cfg.resgateVisto = l[0].k + ':' + l[0].quando; sujo = true; } fecharPainel(); };
+  painel.querySelectorAll('[data-rest]').forEach((b) => (b.onclick = () => { b.textContent = 'Recuperando…'; if (!restaurarSave(l[+b.dataset.rest])) b.textContent = 'Não deu certo'; }));
 }
 // ---------------- contas ----------------
 function abrirContas() {
@@ -5095,6 +5114,8 @@ atualizarHUD();
 requestAnimationFrame((t) => { ultimo = t; quadro(t); });
 addEventListener('pagehide', salvar);
 if (CONTAS.lista.length > 1 && S.criado) setTimeout(() => toast('Conta: ' + (S.look.nome || CONTA.nome || 'sem nome') + ' · troque em Ajustes › Contas', '#9fd8ff'), 2200);
+// se existir uma cópia bem mais avançada que o save atual (ex.: uma atualização não abriu o save), oferece recuperar
+setTimeout(() => { try { const l = savesAntigos(), b = l[0]; if (b && b.total.gt(1000) && b.total.gt(S.total.mul(2)) && S.cfg.resgateVisto !== b.k + ':' + b.quando) abrirResgate(true); } catch (e) { /* ok */ } }, 1200);
 if (saveOrigem === 'copia') setTimeout(() => toast('O save principal estava danificado: o progresso foi recuperado da cópia de segurança', '#ffd84a'), 1500);
 document.addEventListener('visibilitychange', () => { if (document.hidden) salvar(); });
 </script>
